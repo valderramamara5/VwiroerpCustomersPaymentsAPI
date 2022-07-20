@@ -1,0 +1,5 @@
+customers:
+    path: /api/customers/list
+    # the controller value has the format 'controller_class::method_name'
+    controller: App\Controller\CustomersController::list
+    methods:    POST
