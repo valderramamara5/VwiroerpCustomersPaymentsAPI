@@ -29,7 +29,7 @@ class CustomersController extends AbstractController
         $res = $var * 3;
         return $this->json([
             // 'id' => $customer->getId(),
-            'path' => 'src/Controller/CustomersController.php',
+            'path' => 'src/Controller/CustomersController.php.fff',
         ]);
     }
 }

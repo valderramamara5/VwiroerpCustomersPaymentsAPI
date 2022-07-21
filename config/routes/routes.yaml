@@ -1,5 +1,11 @@
+products:
+    path: /api/product/{id}
+    controller: App\Controller\ProductsController::lowestPrice
+    methods:    POST
+
 customers:
-    path: /api/customers/list
-    # the controller value has the format 'controller_class::method_name'
+    path: /api/customers/lista
+    # the controller value has the format 'controller_class::method_name' 
     controller: App\Controller\CustomersController::list
     methods:    POST
+
