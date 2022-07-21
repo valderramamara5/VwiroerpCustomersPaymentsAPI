@@ -29,17 +29,26 @@ class ProductsController extends AbstractController
             
         }
        
+        
        
         
         /**  @var LowestPriceEnquiry $lowestPriceEnquiry */
 
         $lowestPriceEnquiry = $serializer->deserialize($request-> getContent(), LowestPriceEnquiry::class, 'json');
         
-        $lowestPriceEnquiry -> setPrice(100);
-        $lowestPriceEnquiry -> setDiscountedPrice(50);
-        $lowestPriceEnquiry -> setPromotionId(3);
-        $lowestPriceEnquiry -> setPromotionName('Black friday half price sale');
+        // $lowestPriceEnquiry = new \App\DTO\LowestPriceEnquiry();
+        // $lowestPriceEnquiry -> setPrice(100);
+        // $lowestPriceEnquiry -> setDiscountedPrice(50);
+        // $lowestPriceEnquiry -> setPromotionId(3);
+        // $lowestPriceEnquiry -> setPromotionName('Black friday half price sale');
         
-        return new JsonResponse($lowestPriceEnquiry, 200);
+        $json = $serializer->serialize($lowestPriceEnquiry, 'json');
+        return new JsonResponse($json, 200) ;
+        
+        // return new JsonResponse($lowestPriceEnquiry, 200);
+        // return $this->json([
+        //     // 'id' => $customer->getId(),
+        //     'controller' => 'Products',
+        // ]);
     }
 }

@@ -2,8 +2,10 @@
 
 namespace App\DTO;
 
-class LowestPriceEnquiry implements PromotionEnquiryInterface
-{
+use App\DTO\PromotionEnquiryInterface;
+
+class LowestPriceEnquiry 
+{ 
 
 private ?int $quantity;
 private ?string $requestLocation;
