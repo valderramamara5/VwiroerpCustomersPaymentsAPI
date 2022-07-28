@@ -1,17 +1,19 @@
 <?php
 
 namespace App\DTO;
-
 use App\DTO\PromotionEnquiryInterface;
+use App\Entity\Product;
+use Symfony\Component\Serializer\Annotation\Ignore;
 
-class LowestPriceEnquiry 
+class LowestPriceEnquiry implements PromotionEnquiryInterface
 { 
 
 private ?int $quantity;
 private ?string $requestLocation;
 private ?string $voucherCode;
 private ?string $requestDate;
-private ?int $productId;
+#[Ignore]
+private ?Product $product;
 private ?int $price;
 private ?int $discountedPrice;
 private ?int $promotionId;
@@ -106,21 +108,21 @@ return $this;
 
 
 /**
- * Get the value of productId
+ * Get the value of product
  */ 
-public function getProductId()
+public function getProduct()
 {
-return $this->productId;
+return $this->product;
 }
 
 /**
- * Set the value of productId
+ * Set the value of product
  *
  * @return  self
  */ 
-public function setProductId($productId)
+public function setProduct($product)
 {
-$this->productId = $productId;
+$this->product = $product;
 
 return $this;
 }
@@ -212,12 +214,5 @@ $this->promotionName = $promotionName;
 
 return $this;
 }
-
-
-public function jsonSerialize(): mixed
-{
-    return get_object_vars($this);
-}
-
 
 }

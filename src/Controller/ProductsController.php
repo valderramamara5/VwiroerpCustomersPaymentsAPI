@@ -5,50 +5,71 @@
 namespace App\Controller;
 
 use App\DTO\LowestPriceEnquiry;
+use App\Filter\PromotionFilterInterface;
+use App\Repository\ProductRepository;
+use App\Service\Serializer\DTOSerializer;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Entity\Promotion;
+use App\Entity\Product;
+use App\Repository\PromotionRepository;
+
 
 class ProductsController extends AbstractController
 {
+
+    public function __construct(
+        private ProductRepository $repository,
+        //private PromotionRepository $repositoryPromotion
+        private EntityManagerInterface $entityManager
+        )
+    {
+        
+    }
     /**
     * @Route("/api/products/{id}/lowest-price", name= "lowest-price", methods={"POST"})
     */
     
-    public function lowestPrice(Request $request, int $id, SerializerInterface $serializer): Response
+    public function lowestPrice(
+        Request $request,
+        int $id, 
+        DTOSerializer $serializer,
+        PromotionFilterInterface $promotionFilter
+        ): Response
     {
-
 
         if ($request -> headers ->has('force_fail')){
             return new JsonResponse(
                 ['error' => 'Promotion Engine failure message'], 
-                $request -> headers -> get('force_fail') );
-            
+                $request -> headers -> get('force_fail') );     
         }
-       
-        
-       
-        
+
         /**  @var LowestPriceEnquiry $lowestPriceEnquiry */
 
         $lowestPriceEnquiry = $serializer->deserialize($request-> getContent(), LowestPriceEnquiry::class, 'json');
+
+        $product = $this -> repository -> find($id); //Add error for not found product
+        $lowestPriceEnquiry -> setProduct($product);
+
+        // $promotions = $this -> repositoryPromotion -> findValidForProduct(
+        //     $product, date_create_immutable($lowestPriceEnquiry -> getRequestDate()) 
+        // );
+
+        $promotions = $this -> entityManager -> getRepository(Promotion::class) -> findValidForProduct(
+            $product, date_create_immutable($lowestPriceEnquiry -> getRequestDate()) 
+        ); 
+
         
-        // $lowestPriceEnquiry = new \App\DTO\LowestPriceEnquiry();
-        // $lowestPriceEnquiry -> setPrice(100);
-        // $lowestPriceEnquiry -> setDiscountedPrice(50);
-        // $lowestPriceEnquiry -> setPromotionId(3);
-        // $lowestPriceEnquiry -> setPromotionName('Black friday half price sale');
         
-        $json = $serializer->serialize($lowestPriceEnquiry, 'json');
-        return new JsonResponse($json, 200) ;
+        $modifiedEnquiry = $promotionFilter -> apply($lowestPriceEnquiry, ...$promotions);
         
-        // return new JsonResponse($lowestPriceEnquiry, 200);
-        // return $this->json([
-        //     // 'id' => $customer->getId(),
-        //     'controller' => 'Products',
-        // ]);
+        $responseContent = $serializer->serialize($modifiedEnquiry, 'json');
+        return new Response($responseContent, 200, ['Content-Type' => 'application/json']);
+       
     }
 }
