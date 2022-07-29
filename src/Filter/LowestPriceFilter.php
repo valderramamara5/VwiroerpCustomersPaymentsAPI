@@ -9,15 +9,16 @@ use App\Entity\Promotion;
 use App\DTO\LowestPriceEnquiry;
 use App\Filter\Modifier\Factory\PriceModifierFactoryInterface;
 use App\Filter\Modifier\Factory\PriceModifierFactory;
+use App\DTO\PriceEnquiryInterface;
 
-class LowestPriceFilter implements PromotionFilterInterface
+class LowestPriceFilter implements PriceFilterInterface
 {
     public function __construct(private PriceModifierFactoryInterface $priceModifierFactory)
     {
        
     }
 
-    public function apply(PromotionEnquiryInterface $enquiry, Promotion ...$promotions): PromotionEnquiryInterface
+    public function apply(PriceEnquiryInterface $enquiry, Promotion ...$promotions): PriceEnquiryInterface
     {
 
         

@@ -4,8 +4,9 @@ namespace App\DTO;
 use App\DTO\PromotionEnquiryInterface;
 use App\Entity\Product;
 use Symfony\Component\Serializer\Annotation\Ignore;
+use App\DTO\PriceEnquiryInterface;
 
-class LowestPriceEnquiry implements PromotionEnquiryInterface
+class LowestPriceEnquiry implements PriceEnquiryInterface
 { 
 
 private ?int $quantity;
@@ -127,7 +128,7 @@ $this->product = $product;
 return $this;
 }
 
-
+ 
 
 /**
  * Get the value of price
