@@ -6,3 +6,8 @@ services:
     ports:
       - "5432"
 ###< doctrine/doctrine-bundle ###
+
+  redis:
+    image: redis:7.0.0
+    ports:
+      - "6379" 

@@ -4,6 +4,7 @@
 
 namespace App\Controller;
 
+use App\Cache\PromotionCache;
 use App\DTO\LowestPriceEnquiry;
 use App\Filter\PromotionFilterInterface;
 use App\Repository\ProductRepository;
@@ -18,7 +19,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Entity\Promotion;
 use App\Entity\Product;
 use App\Repository\PromotionRepository;
-
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
 class ProductsController extends AbstractController
 {
@@ -39,7 +41,8 @@ class ProductsController extends AbstractController
         Request $request,
         int $id, 
         DTOSerializer $serializer,
-        PromotionFilterInterface $promotionFilter
+        PromotionFilterInterface $promotionFilter, 
+        PromotionCache $promotionCache
         ): Response
     {
 
@@ -60,11 +63,10 @@ class ProductsController extends AbstractController
         //     $product, date_create_immutable($lowestPriceEnquiry -> getRequestDate()) 
         // );
 
-        $promotions = $this -> entityManager -> getRepository(Promotion::class) -> findValidForProduct(
-            $product, date_create_immutable($lowestPriceEnquiry -> getRequestDate()) 
-        ); 
+       
+        $promotions = $promotionCache -> findValidForProduct($product, $lowestPriceEnquiry -> getRequestDate());
 
-        
+                
         
         $modifiedEnquiry = $promotionFilter -> apply($lowestPriceEnquiry, ...$promotions);
         
