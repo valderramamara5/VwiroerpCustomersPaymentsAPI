@@ -5,7 +5,7 @@ namespace App\Repository;
 use App\Entity\States;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-
+ 
 /**
  * @extends ServiceEntityRepository<States>
  *
@@ -19,6 +19,16 @@ class StatesRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, States::class);
+    }
+
+    public function findByName($nameStates): ?States
+    {
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.name = :name')
+            ->setParameter('name', $nameStates)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
     }
 
     public function add(States $entity, bool $flush = false): void

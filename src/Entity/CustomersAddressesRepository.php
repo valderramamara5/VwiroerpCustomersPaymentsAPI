@@ -1,37 +1,27 @@
 <?php
 
-namespace App\Repository;
+namespace App\Entity;
 
-use App\Entity\Cities;
+use App\Entity\CustomersAddresses;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Cities>
+ * @extends ServiceEntityRepository<CustomersAddresses>
  *
- * @method Cities|null find($id, $lockMode = null, $lockVersion = null)
- * @method Cities|null findOneBy(array $criteria, array $orderBy = null)
- * @method Cities[]    findAll()
- * @method Cities[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method CustomersAddresses|null find($id, $lockMode = null, $lockVersion = null)
+ * @method CustomersAddresses|null findOneBy(array $criteria, array $orderBy = null)
+ * @method CustomersAddresses[]    findAll()
+ * @method CustomersAddresses[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class CitiesRepository extends ServiceEntityRepository
+class CustomersAddressesRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Cities::class);
+        parent::__construct($registry, CustomersAddresses::class);
     }
 
-    public function findByName($nameCity): ?Cities
-    {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.name = :name')
-            ->setParameter('name', $nameCity)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-
-    public function add(Cities $entity, bool $flush = false): void
+    public function add(CustomersAddresses $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -40,7 +30,7 @@ class CitiesRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(Cities $entity, bool $flush = false): void
+    public function remove(CustomersAddresses $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -50,7 +40,7 @@ class CitiesRepository extends ServiceEntityRepository
     }
 
 //    /**
-//     * @return Cities[] Returns an array of Cities objects
+//     * @return CustomersAddresses[] Returns an array of CustomersAddresses objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -64,7 +54,7 @@ class CitiesRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Cities
+//    public function findOneBySomeField($value): ?CustomersAddresses
 //    {
 //        return $this->createQueryBuilder('c')
 //            ->andWhere('c.exampleField = :val')

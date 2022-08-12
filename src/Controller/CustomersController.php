@@ -14,12 +14,16 @@ use App\Entity\CustomerTypes;
 use App\Entity\IdentifierTypes;
 use App\Entity\CustomersContact; 
 use App\Entity\Countries;
+use App\Entity\States;
+use App\Entity\ReferencesCustomers;
 use App\Repository\CustomersRepository;
 use App\Repository\CustomersContactRepository;
 use App\Repository\CustomerTypesRepository;
 use App\Repository\IdentifierTypesRepository;
 use App\Repository\CountriesRepository;
 use App\Repository\CountriesPhoneCodeRepository;
+use App\Repository\CitiesRepository;
+use App\Repository\StatesRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -39,6 +43,8 @@ class CustomersController extends AbstractController
         private CustomersContactRepository $customerContactRepository,
         private CountriesRepository $countryRepository,
         private CountriesPhoneCodeRepository $countryPhoneRepository,
+        private CitiesRepository $cityRepository,
+        private StatesRepository $StateRepository,
         private EntityManagerInterface $entityManager
         )
         {}
@@ -115,14 +121,14 @@ class CustomersController extends AbstractController
 
         $idenType = 1;
         $custType = 2;
-        $customerId = '5';
+        $customerId = '5657';
         $firstNameCustomer = 'maria';
         $middleNameCustomer = 'lucia';
         $lastNameCustomer  = 'perez';
         $emailCustomer = '@1';
         
         $comercialName = 'Consured';
-        $contactId = '6';
+        $contactId = '9890';
         $identTypeContact = 1;
         $firstNameContact = 'susana';
         $lastNameContact  =  'garcia';
@@ -135,10 +141,33 @@ class CustomersController extends AbstractController
         $countryPhoneCode = $this -> countryPhoneRepository->findOneByCountry($countryId);
 
         $phoneNumbers =[
-            "7868671471",
-            "2675519213"
+            "7868671476",
+            "2675519215"
+        ];
+
+        
+        $nameState = 'Valle del Cauca';
+        $nameCity = 'Jamundí';
+        $line1 = "20515 E Country Club DR";
+        $line2 = "Apto 346";
+        $zipcode = 33180;
+        $socioconomicStatus = 5;
+        $note = "Al lado de la iglesia";
+        //$states = $this->StateRepository->findByName($nameState);
+        $city =  $this->cityRepository->findByName($nameCity);
+        //dd($states, $city);
+        //$countryPhoneCode = $this -> countryPhoneRepository->findOneByCountry($countryId);
+
+        $references = [([
+            "fullName" =>'Pepe Lopez',
+            "contactPhone"=>"7868672314",
+            "type"=>1]),
+            (["fullName"=>'Pepa Lopez',
+            "contactPhone"=>"7868672314",
+            "type"=>1])
         ];
         
+    
 
         $customerType = new CustomerTypes;
         $identifierType = new IdentifierTypes();
@@ -204,11 +233,50 @@ class CustomersController extends AbstractController
             $customerPhone->setCustomers($customer);
             $customerPhone->setCountriesPhoneCode($countryPhoneCode);
             $customerPhone->setCreatedDate($date);
+           
             $entityManager->persist($customerPhone);
 
         }
 
+        $customerAddress = new CustomersAddresses();
+        $customerAddress->setCustomers($customer);
+        $customerAddress->setCities($city);
+        $customerAddress->setLine1($line1);
+        $customerAddress->setLine2($line2);
+        $customerAddress->setZipcode($zipcode);
+        $customerAddress->setSocieconomicStatus($socioconomicStatus);
+        $customerAddress->setNote($note);
+        $customerAddress->setCreatedDate($date);
+       
+        $entityManager->persist($customerAddress);
         
+      
+
+        
+        foreach($references as $reference){
+            $customerReference = new ReferencesCustomers();
+            $referenceIdentifierType = new IdentifierTypes();
+            $referenceIdentifierType = $this -> IdentifierRepository ->find($reference['type']);
+            $customerReference->setCustomers($customer);
+            $customerReference->setReferencesCountriesPhoneCode($countryPhoneCode);
+            $customerReference->setFullName($reference['fullName']);
+            $customerReference->setReferencesContactPhone($reference['contactPhone']);
+            $customerReference->setCreatedDate($date);
+            $entityManager->persist($customerReference);
+          
+          
+        }
+        
+        $entityManager->flush();  
+        
+        return $this->json([
+                //'id' => $customerType->getId(),
+                'customerReference' => $customerReference,
+                //'customerPhone' => $customerPhone,
+                 //'type' => $customersContacts->getCustomers(),
+                 'path' => 'src/Controller/CustomersController.php',
+             ]); 
+
         $entityManager->flush();  
         // $identifierType = $entityManager->getRepository(IdentifierTypes::class)->find(1);
  
@@ -299,9 +367,6 @@ class CustomersController extends AbstractController
 
         
 
-        // $contacts = New Contacts;
-        // $contacts->setFirstName($dataJson['references']['FullName']);
-        // dd($contacts);
         
         
 
