@@ -52,6 +52,8 @@ class CustomersController extends AbstractController
         // //$dataJson = json_decode($request->getContent(), true);
         
         // //$conn = $entityManager -> getConnection(); 
+       
+       
         // $customer = new Customers();
         // $customerType = $this ->customerTRepository ->find(1);
         // $identifierType = $this -> IdentifierRepository ->find(1);
@@ -105,42 +107,96 @@ class CustomersController extends AbstractController
         //$customers = $this ->customerContactRepository ->find(1);
        
         //dd($customers);
-        $customerId = '12121';
-        $contactId = '12';
-        $email = 'kkkd';
-        $customer = new Customers();
-        $customerTypes = new CustomerTypes;
-        
-        $contact = new Contacts();
-        
-        $identifierType = new IdentifierTypes();
-        $entityManager->persist($customerTypes);
-        //$entityManager->flush();
-        $customersContacts = new CustomersContact();
 
-        $identifierType = $this -> IdentifierRepository ->find(1);
-        $customerType = $this ->customerTRepository ->find(1);
-        $customer->setPrimaryKeys($customerId, $customerType, $identifierType  ); 
+        $idenType = 1;
+        $custType = 2;
+        $customerId = '3124567';
+        $firstNameCustomer = 'maria';
+        $middleNameCustomer = 'lucia';
+        $lastNameCustomer  = 'perez';
+        $emailCustomer = '@1';
+        
+        $comercialName = 'Consured';
+        $contactId = '123';
+        $identTypeContact = 1;
+        $firstNameContact = 'susana';
+        $lastNameContact  =  'garcia';
+        $emailContact =  '@2';
+
+        $customerType = new CustomerTypes;
+        $identifierType = new IdentifierTypes();
+        $customer = new Customers();
+        //$contact = new Contacts();
+        
+        
+        //$entityManager->persist($customerTypes);
+        //$entityManager->flush();
+        //$customersContacts = new CustomersContact();
+
+        $identifierType = $this -> IdentifierRepository ->find($idenType);
+        $customerType = $this ->customerTRepository ->find($custType);
+        $customer->setPrimaryKeys($customerId, $customerType, $identifierType); 
+        
+        
+ 
         //$customerId = $customer->getId();
         $date = new \DateTime();
         $customer->setCreatedDate($date);
-        $customer->setEmail($email);
-        $entityManager->persist($customer);
-        $entityManager->flush();    
-        $contact->setPrimaryKeys($contactId, $identifierType);
-        $entityManager->persist($contact);
+        $customer->setUpdateDate($date);
+        //$customer->setEmail($email);
 
-        $entityManager->persist($customer);
+       
+        if($custType == 2){
+            
+            $customer->setComercialName($comercialName);
+            $entityManager->persist($customer);
+            $identifierTypeContact = new IdentifierTypes();
+            $contact = new Contacts();
+            
+            $identifierTypeContact = $this -> IdentifierRepository ->find($identTypeContact);
+            $contact->setPrimaryKeys($contactId,$identifierTypeContact);
+            
+            $contact->setFirstName($firstNameContact);
+            $contact->setMiddleName(isset($middleNameContact) ? $middleNameContact : Null);
+            $contact->setLastName($lastNameContact);
+            $contact->setSecondLastName(isset($secondLastNameContact) ? $secondLastNameContact : Null);
+            $contact->setEmail($emailContact);
+            $contact->setUpdateDate($date);
+            $contact->setCreatedDate($date);   
+            $entityManager->persist($contact);
+            
+            
+            $customersContacts = new CustomersContact();
+            $customersContacts->setCustomers($customer);
+            $customersContacts -> setContacts($contact);
+            $entityManager->persist($customersContacts);
+
+            
+        }
+        else{
+            $customer-> setFirstName($firstNameCustomer);
+            $customer-> setMiddleName(isset($middleNameCustomer) ? $middleNameCustomer : Null);
+            $customer-> setLastName($lastNameCustomer);
+            $customer-> setSecondLastName(isset($secondLastNameCustomer) ? $secondLastNameCustomer : Null);
+            $customer->setEmail(isset($emailCustomer) ? $emailCustomer : Null);
+            $entityManager->persist($customer);
+        }     
+
+        //$entityManager->persist($customer);
+        //$entityManager->flush();    
+        //$contact->setPrimaryKeys($contactId, $identifierType);
+        //$entityManager->persist($contact);
+
+        //$entityManager->persist($customer);
         //$entityManager->flush();  
         
-        $customersContacts->setCustomers($customer);
-        $customersContacts -> setContacts($contact);
-        $entityManager->persist($customersContacts);
+        
         $entityManager->flush();  
         // $identifierType = $entityManager->getRepository(IdentifierTypes::class)->find(1);
  
         return $this->json([
            'id' => $customerType->getId(),
+           'customer' => $customer,
             //'type' => $customersContacts->getCustomers(),
             'path' => 'src/Controller/CustomersController.php',
         ]);  
