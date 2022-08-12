@@ -13,10 +13,13 @@ use App\Entity\CountriesPhoneCode;
 use App\Entity\CustomerTypes;
 use App\Entity\IdentifierTypes;
 use App\Entity\CustomersContact; 
+use App\Entity\Countries;
 use App\Repository\CustomersRepository;
 use App\Repository\CustomersContactRepository;
 use App\Repository\CustomerTypesRepository;
 use App\Repository\IdentifierTypesRepository;
+use App\Repository\CountriesRepository;
+use App\Repository\CountriesPhoneCodeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,6 +37,8 @@ class CustomersController extends AbstractController
         private CustomerTypesRepository $customerTRepository,
         private IdentifierTypesRepository $IdentifierRepository,
         private CustomersContactRepository $customerContactRepository,
+        private CountriesRepository $countryRepository,
+        private CountriesPhoneCodeRepository $countryPhoneRepository,
         private EntityManagerInterface $entityManager
         )
         {}
@@ -51,7 +56,7 @@ class CustomersController extends AbstractController
 
         // //$dataJson = json_decode($request->getContent(), true);
         
-        // //$conn = $entityManager -> getConnection(); 
+        $conn = $entityManager -> getConnection(); 
        
        
         // $customer = new Customers();
@@ -110,18 +115,30 @@ class CustomersController extends AbstractController
 
         $idenType = 1;
         $custType = 2;
-        $customerId = '3124567';
+        $customerId = '5';
         $firstNameCustomer = 'maria';
         $middleNameCustomer = 'lucia';
         $lastNameCustomer  = 'perez';
         $emailCustomer = '@1';
         
         $comercialName = 'Consured';
-        $contactId = '123';
+        $contactId = '6';
         $identTypeContact = 1;
         $firstNameContact = 'susana';
         $lastNameContact  =  'garcia';
         $emailContact =  '@2';
+
+        //$country = new Countries();
+        $nameCountry = 'Colombia';
+        $countryId = $this->countryRepository-> findIdByName($nameCountry);
+        $country =  $this->countryRepository-> findByName($nameCountry);
+        $countryPhoneCode = $this -> countryPhoneRepository->findOneByCountry($countryId);
+
+        $phoneNumbers =[
+            "7868671471",
+            "2675519213"
+        ];
+        
 
         $customerType = new CustomerTypes;
         $identifierType = new IdentifierTypes();
@@ -136,7 +153,7 @@ class CustomersController extends AbstractController
         $identifierType = $this -> IdentifierRepository ->find($idenType);
         $customerType = $this ->customerTRepository ->find($custType);
         $customer->setPrimaryKeys($customerId, $customerType, $identifierType); 
-        
+        $customer->setEmail(isset($emailCustomer) ? $emailCustomer : Null);
         
  
         //$customerId = $customer->getId();
@@ -178,18 +195,19 @@ class CustomersController extends AbstractController
             $customer-> setMiddleName(isset($middleNameCustomer) ? $middleNameCustomer : Null);
             $customer-> setLastName($lastNameCustomer);
             $customer-> setSecondLastName(isset($secondLastNameCustomer) ? $secondLastNameCustomer : Null);
-            $customer->setEmail(isset($emailCustomer) ? $emailCustomer : Null);
             $entityManager->persist($customer);
         }     
 
-        //$entityManager->persist($customer);
-        //$entityManager->flush();    
-        //$contact->setPrimaryKeys($contactId, $identifierType);
-        //$entityManager->persist($contact);
+        foreach($phoneNumbers as $number){
+            $customerPhone = new CustomersPhones();
+            $customerPhone->setPhoneNumber($number);
+            $customerPhone->setCustomers($customer);
+            $customerPhone->setCountriesPhoneCode($countryPhoneCode);
+            $customerPhone->setCreatedDate($date);
+            $entityManager->persist($customerPhone);
 
-        //$entityManager->persist($customer);
-        //$entityManager->flush();  
-        
+        }
+
         
         $entityManager->flush();  
         // $identifierType = $entityManager->getRepository(IdentifierTypes::class)->find(1);
@@ -197,6 +215,7 @@ class CustomersController extends AbstractController
         return $this->json([
            'id' => $customerType->getId(),
            'customer' => $customer,
+           'customerPhone' => $customerPhone,
             //'type' => $customersContacts->getCustomers(),
             'path' => 'src/Controller/CustomersController.php',
         ]);  
