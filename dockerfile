@@ -59,7 +59,7 @@ COPY docker/php/docker-entrypoint.sh /usr/local/bin/docker-entrypoint
 RUN chmod +x /usr/local/bin/docker-entrypoint
 
 ENTRYPOINT ["docker-entrypoint"]
-CMD ["php-fpm"]
+CMD ["php-fpm"] 
 
 
 FROM nginx:${NGINX_VERSION}-alpine AS app_nginx
@@ -67,3 +67,5 @@ FROM nginx:${NGINX_VERSION}-alpine AS app_nginx
 COPY docker/nginx/conf.d/default.conf /etc/nginx/conf.d/
 
 WORKDIR /app/public
+
+

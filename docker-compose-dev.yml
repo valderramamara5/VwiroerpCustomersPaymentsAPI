@@ -17,7 +17,6 @@ services:
     build:
       context: .
       target: app_php
-    
     image: sf-docker/php:dev
     restart: on-failure
     environment:
