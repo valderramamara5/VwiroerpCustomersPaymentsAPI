@@ -2,26 +2,26 @@
 
 namespace App\Repository;
 
-use App\Entity\References;
+use App\Entity\ReferencesCustomers;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<References>
+ * @extends ServiceEntityRepository<ReferencesCustomers>
  *
- * @method References|null find($id, $lockMode = null, $lockVersion = null)
- * @method References|null findOneBy(array $criteria, array $orderBy = null)
- * @method References[]    findAll()
- * @method References[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method ReferencesCustomers|null find($id, $lockMode = null, $lockVersion = null)
+ * @method ReferencesCustomers|null findOneBy(array $criteria, array $orderBy = null)
+ * @method ReferencesCustomers[]    findAll()
+ * @method ReferencesCustomers[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ReferencesRepository extends ServiceEntityRepository
+class ReferencesCustomersRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, References::class);
+        parent::__construct($registry, ReferencesCustomers::class);
     }
 
-    public function add(References $entity, bool $flush = false): void
+    public function add(ReferencesCustomers $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class ReferencesRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(References $entity, bool $flush = false): void
+    public function remove(ReferencesCustomers $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -40,7 +40,7 @@ class ReferencesRepository extends ServiceEntityRepository
     }
 
 //    /**
-//     * @return References[] Returns an array of References objects
+//     * @return ReferencesCustomers[] Returns an array of ReferencesCustomers objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -54,7 +54,7 @@ class ReferencesRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?References
+//    public function findOneBySomeField($value): ?ReferencesCustomers
 //    {
 //        return $this->createQueryBuilder('r')
 //            ->andWhere('r.exampleField = :val')
