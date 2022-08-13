@@ -141,7 +141,7 @@ class Contacts
         return $this;
     }
 
-    public function getIdentifierTypes(): ?CustomerTypes
+    public function getIdentifierTypes(): ?IdentifierTypes
     {
         return $this->identifierTypes;
     }

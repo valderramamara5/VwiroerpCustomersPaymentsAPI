@@ -60,114 +60,47 @@ class CustomersController extends AbstractController
   
         $entityManager = $doctrine->getManager();
 
-        // //$dataJson = json_decode($request->getContent(), true);
+        $dataJson = json_decode($request->getContent(), true);
         
         $conn = $entityManager -> getConnection(); 
+        
+        
+        $idenType = $dataJson['identification']['idIdentifierType'];
+        $custType = $dataJson['customerType'];
+        $customerId = $dataJson['identification']['value'];
+        // $firstNameCustomer = 'maria';
+        // $middleNameCustomer = 'lucia'; Agregar al Json
+        // $lastNameCustomer  = 'perez';
+        // $emailCustomer = '@1';
+        
+        
+
        
-       
-        // $customer = new Customers();
-        // $customerType = $this ->customerTRepository ->find(1);
-        // $identifierType = $this -> IdentifierRepository ->find(1);
-        // //dd($customer ->setId('123'));
-        // $customer ->  setPrimaryKeys('132', $customerType, $identifierType);
-
-        // dd($customer);
+        $nameCountry = 'Colombia'; //Agregar al Json
         
-        // $customers = $this -> customersRepository -> findAll();
-        // $customer1 = $this -> customersRepository -> findById($customers[0]);
-        
-        // $customer2 = $this -> customersRepository -> findCostumersById('23');
-        // dd($customer2);
-        
-        // $customerTypes = $this -> customerTRepository -> findAll();
-
-        // foreach ($customers as $custumer3){
-        // $customer4 = $this -> customersRepository -> findByCustomerTypes($custumer3);
-        // }
-        // dd($customer2);
-        
-        // //dd($customers[0]);
-
-    
-        // // $customer = $this ->customersRepository->find($customers[0]);
-        // // dd($customer);   
-        
-        // //dd($customer);
-        // //$customer = $this -> customersRepository->find($customer->getId());
-        // //dd($customer);
-        // //$customers = $this -> customerContactRepository -> findAll();
-        // $customerTypes = $this -> customerTRepository -> findAll();
-        // //dd($customerTypes);
-        // $customers[0] -> setCustomerTypes($customerTypes[4]);
-        // //dd($customers[0]);
-       
-        // $customerContact = $this -> customerContactRepository -> findByCustomers($customers[0]);
-        // //dd($customerContact);
-        
-        // $customers[0] -> setCustomerTypes($customerTypes[0]);
-        // $customerContact[0]->setCustomers($customers[0]);
-        // dd($customerContact[0]);
-        
-        //$customerContact = $this ->customerContactRepository ->find([1]);
-        //$customerContact = $this -> customerContactRepository->findAll();
-        //$identifierType = $entityManager->getRepository(IdentifierTypes::class)->find(1);
-        
-
-
-
-        //$customers = $this ->customerContactRepository ->find(1);
-       
-        //dd($customers);
-
-        $idenType = 1;
-        $custType = 2;
-        $customerId = '5657';
-        $firstNameCustomer = 'maria';
-        $middleNameCustomer = 'lucia';
-        $lastNameCustomer  = 'perez';
-        $emailCustomer = '@1';
-        
-        $comercialName = 'Consured';
-        $contactId = '9890';
-        $identTypeContact = 1;
-        $firstNameContact = 'susana';
-        $lastNameContact  =  'garcia';
-        $emailContact =  '@2';
-
-        //$country = new Countries();
-        $nameCountry = 'Colombia';
         $countryId = $this->countryRepository-> findIdByName($nameCountry);
         $country =  $this->countryRepository-> findByName($nameCountry);
         $countryPhoneCode = $this -> countryPhoneRepository->findOneByCountry($countryId);
 
-        $phoneNumbers =[
-            "7868671476",
-            "2675519215"
-        ];
+        $phoneNumbers =$dataJson['phoneNumbers'];
 
         
-        $nameState = 'Valle del Cauca';
-        $nameCity = 'Jamundí';
-        $line1 = "20515 E Country Club DR";
-        $line2 = "Apto 346";
-        $zipcode = 33180;
-        $socioconomicStatus = 5;
-        $note = "Al lado de la iglesia";
+        $nameState = 'Valle del Cauca'; //Agregar al Json
+        
+        $nameCity = $dataJson['address']['city']['name'];
+        $line1 = $dataJson['address']['line1'];
+        $line2 = $dataJson['address']['line2'];;
+        $zipcode = $dataJson['address']['zipCode'];
+
+        $socioconomicStatus = 5; //Agregar al Json
+        
+        $note = $dataJson['address']['note'];
         //$states = $this->StateRepository->findByName($nameState);
         $city =  $this->cityRepository->findByName($nameCity);
         //dd($states, $city);
         //$countryPhoneCode = $this -> countryPhoneRepository->findOneByCountry($countryId);
 
-        $references = [([
-            "fullName" =>'Pepe Lopez',
-            "contactPhone"=>"7868672314",
-            "type"=>1]),
-            (["fullName"=>'Pepa Lopez',
-            "contactPhone"=>"7868672314",
-            "type"=>1])
-        ];
-        
-    
+        $references = $dataJson['references'];
 
         $customerType = new CustomerTypes;
         $identifierType = new IdentifierTypes();
@@ -193,6 +126,14 @@ class CustomersController extends AbstractController
 
        
         if($custType == 2){
+            $comercialName = $dataJson['comercialName'];
+            $contactId = '9890'; //Agregar al Json(?)
+            $identTypeContact = 1; //Agregar al Json(?)
+            $firstNameContact = $dataJson['mainContact']['firstName'];
+            $middleNameContact = $dataJson['mainContact']['middleName'];
+            $lastNameContact  =  $dataJson['mainContact']['lastName'];
+            $secondLastNameContact = $dataJson['mainContact']['secondLastName'];
+            $emailContact =  $dataJson['mainContact']['email'];
             
             $customer->setComercialName($comercialName);
             $entityManager->persist($customer);
@@ -220,6 +161,12 @@ class CustomersController extends AbstractController
             
         }
         else{
+            $firstNameCustomer = $dataJson['firstName'];
+            
+            //$middleNameCustomer = $dataJson['middleName']; //Agregar al Json
+            
+            $lastNameCustomer = $dataJson['lastName'];
+
             $customer-> setFirstName($firstNameCustomer);
             $customer-> setMiddleName(isset($middleNameCustomer) ? $middleNameCustomer : Null);
             $customer-> setLastName($lastNameCustomer);
@@ -260,13 +207,23 @@ class CustomersController extends AbstractController
             $customerReference->setCustomers($customer);
             $customerReference->setReferencesCountriesPhoneCode($countryPhoneCode);
             $customerReference->setFullName($reference['fullName']);
-            $customerReference->setReferencesContactPhone($reference['contactPhone']);
+            $customerReference->setReferencesContactPhone($reference['contacPhone']);
             $customerReference->setCreatedDate($date);
             $entityManager->persist($customerReference);
           
           
         }
-        
+        return $this->json([
+            //'id' => $customerType->getId(),
+            // 'customer' => $customer,
+            // 'contact' => $customersContacts,
+            'address' => $customerAddress,
+            // 'phone' => $customerPhone,
+            // 'customerReference' => $customerReference,
+            //'customerPhone' => $customerPhone,
+             //'type' => $customersContacts->getCustomers(),
+             'path' => 'src/Controller/CustomersController.php',
+         ]); 
         $entityManager->flush();  
         
         return $this->json([
@@ -288,7 +245,7 @@ class CustomersController extends AbstractController
             'path' => 'src/Controller/CustomersController.php',
         ]);  
 
-        
+    }
         // $customer = new Customers();
         // $customerTypes = new CustomerTypes;
 
@@ -374,6 +331,6 @@ class CustomersController extends AbstractController
 
 
     
-    }    
+        
 
 }
