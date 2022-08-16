@@ -19,13 +19,13 @@ class Customers
     #[ORM\GeneratedValue(strategy:"NONE")]
     #[ORM\ManyToOne(targetEntity:"CustomerTypes")]
     #[ORM\JoinColumn(name:"customer_types_id", referencedColumnName:"id")]
-    private ?CustomerTypes $customerTypes;
+    private $customerTypes;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy:"NONE")]
     #[ORM\ManyToOne(targetEntity:"IdentifierTypes")]
     #[ORM\JoinColumn(name:"identifier_types_id", referencedColumnName:"id")]
-    private ?IdentifierTypes $identifierTypes;
+    private  $identifierTypes;
 
     #[ORM\Column(length: 128, nullable: true)]
     private ?string $comercialName = null;
@@ -81,7 +81,7 @@ class Customers
         $this->comercialName = $comercialName;
 
         return $this;
-    }
+    } 
 
     public function getFirstName(): ?string
     {

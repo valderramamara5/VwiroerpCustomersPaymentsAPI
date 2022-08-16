@@ -45,10 +45,12 @@ class CustomersAddresses
     #[ORM\Column(type: Types::DECIMAL, nullable: true)]
     private ?int $socieconomicStatus;
 
-    // #[ORM\Column(type:Types::BLOB, nullable: true)]
-    // private ?string $image;
-    #[ORM\Column(type:Types::BLOB , nullable: true)]
-    private ?string $image;
+     /**
+     * @var string
+     *
+     * @ORM\Column(name="image", type="blob", nullable=true)
+     */
+    private $image;
 
     #[ORM\Column(length: 512, nullable: true)]
     private ?string $note ;
@@ -157,6 +159,6 @@ class CustomersAddresses
         return $this;
     }
 
-    
-
+   
+   
 }

@@ -4,8 +4,8 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
 
-#[ORM\Entity(repositoryClass: ReferencesCustomersRepository::class)]
-class ReferencesCustomers
+#[ORM\Entity(repositoryClass: CustomersReferencesRepository::class)]
+class CustomersReferences
 {
 
     #[ORM\Id]

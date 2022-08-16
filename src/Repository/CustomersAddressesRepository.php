@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entity;
+namespace App\Repository;
 
 use App\Entity\CustomersAddresses;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -38,6 +38,39 @@ class CustomersAddressesRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+
+           /**
+    * @return CustomersAddresses[] Returns an array of CustomersPhones objects
+    */
+   public function findByCustomer($customer): array
+   {
+        return $this->createQueryBuilder('cc')
+        ->join('cc.customers', 'c')
+        ->andWhere('c.id = :id')
+        ->andWhere('c.customerTypes = :customerTypes')
+        ->andWhere('c.identifierTypes = :identifierTypes')
+        ->setParameter('id',  $customer->getId())
+        ->setParameter('customerTypes', $customer->getCustomerTypes())
+        ->setParameter('identifierTypes', $customer->getIdentifierTypes())
+        ->getQuery()
+        ->getResult()
+       ;
+   }
+
+   public function findOneByCustomer($customer): ?CustomersAddresses
+   {
+       return $this->createQueryBuilder('ca')
+        ->join('ca.customers', 'c')
+        ->andWhere('c.id = :id')
+        ->andWhere('c.customerTypes = :customerTypes')
+        ->andWhere('c.identifierTypes = :identifierTypes')
+        ->setParameter('id',  $customer->getId())
+        ->setParameter('customerTypes', $customer->getCustomerTypes())
+        ->setParameter('identifierTypes', $customer->getIdentifierTypes())
+        ->getQuery()
+        ->getOneOrNullResult()
+       ;
+   }
 
 //    /**
 //     * @return CustomersAddresses[] Returns an array of CustomersAddresses objects

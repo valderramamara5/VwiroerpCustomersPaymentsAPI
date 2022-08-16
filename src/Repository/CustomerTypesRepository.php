@@ -38,6 +38,15 @@ class CustomerTypesRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+       public function findOneById($id): ?CustomerTypes
+   {
+       return $this->createQueryBuilder('c')
+           ->andWhere('c.id = :id')
+           ->setParameter('id', $id)
+           ->getQuery()
+           ->getOneOrNullResult()
+       ;
+   }
 
 //    /**
 //     * @return CustomerTypes[] Returns an array of CustomerTypes objects

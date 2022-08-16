@@ -3,3 +3,9 @@ api_post_show:
     controller: App\Controller\CustomersController::create
     methods:    POST    
 
+update_customers:
+    path: api/v1/customers/update
+    # the controller value has the format 'controller_class::method_name' 
+    controller: App\Controller\UpdateController::update
+    methods:    POST    
+

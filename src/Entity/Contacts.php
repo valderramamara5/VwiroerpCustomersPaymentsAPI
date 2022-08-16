@@ -19,7 +19,7 @@ class Contacts
     #[ORM\GeneratedValue(strategy:"NONE")]
     #[ORM\ManyToOne(targetEntity:"IdentifierTypes")]
     #[ORM\JoinColumn(name:"identifier_types_id", referencedColumnName:"id")]
-    private ?IdentifierTypes $identifierTypes;
+    private  $identifierTypes;
 
     #[ORM\Column(length: 128, nullable: true)]
     private ?string $firstName = null;

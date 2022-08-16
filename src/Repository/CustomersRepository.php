@@ -50,6 +50,36 @@ class CustomersRepository extends ServiceEntityRepository
            ->getResult()
        ;
    }
+
+   public function findByPrimaryKeys($id,  $customerType,  $identifierCustomerType): ?Customers
+   {
+       return $this->createQueryBuilder('c')
+           ->join('c.customerTypes', 'ct')
+           ->join('c.identifierTypes', 'ci')
+           ->andWhere('c.id = :id')
+           ->andWhere('ct.id = :customerTypes')
+           ->andWhere('ci.id = :identifierTypes')
+           ->setParameter('id', $id)
+           ->setParameter('customerTypes', $customerType)
+           ->setParameter('identifierTypes', $identifierCustomerType)
+           ->getQuery()
+           ->getOneorNullResult()
+       ;
+   }
+
+
+   public function findOneById($id): ?Customers
+   {
+       return $this->createQueryBuilder('c')
+           ->andWhere('c.id = :id')
+           ->setParameter('id', $id)
+           ->getQuery()
+           ->getOneOrNullResult()
+       ;
+   }
+
+
+
       /**
     * @return Customers[] Returns an array of Customers objects
     */

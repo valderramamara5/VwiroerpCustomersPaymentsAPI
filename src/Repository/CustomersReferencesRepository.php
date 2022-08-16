@@ -2,26 +2,26 @@
 
 namespace App\Repository;
 
-use App\Entity\CustomersContact;
+use App\Entity\CustomersReferences;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<CustomersContact>
+ * @extends ServiceEntityRepository<CustomersReferences>
  *
- * @method CustomersContact|null find($id, $lockMode = null, $lockVersion = null)
- * @method CustomersContact|null findOneBy(array $criteria, array $orderBy = null)
- * @method CustomersContact[]    findAll()
- * @method CustomersContact[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method CustomersReferences|null find($id, $lockMode = null, $lockVersion = null)
+ * @method CustomersReferences|null findOneBy(array $criteria, array $orderBy = null)
+ * @method CustomersReferences[]    findAll()
+ * @method CustomersReferences[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class CustomersContactRepository extends ServiceEntityRepository
+class CustomersReferencesRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, CustomersContact::class);
+        parent::__construct($registry, CustomersReferences::class);
     }
 
-    public function add(CustomersContact $entity, bool $flush = false): void
+    public function add(CustomersReferences $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class CustomersContactRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(CustomersContact $entity, bool $flush = false): void
+    public function remove(CustomersReferences $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -39,23 +39,28 @@ class CustomersContactRepository extends ServiceEntityRepository
         }
     }
 
-       public function findOneByCustomer($customer): ?CustomersContact
+               /**
+    * @return CustomersAddresses[] Returns an array of CustomersPhones objects
+    */
+   public function findByCustomer($customer): array
    {
-       return $this->createQueryBuilder('cc')
-        ->join('cc.customers', 'c')
+        return $this->createQueryBuilder('cr')
+        ->join('cr.customers', 'c')
         ->andWhere('c.id = :id')
         ->andWhere('c.customerTypes = :customerTypes')
         ->andWhere('c.identifierTypes = :identifierTypes')
         ->setParameter('id',  $customer->getId())
         ->setParameter('customerTypes', $customer->getCustomerTypes())
         ->setParameter('identifierTypes', $customer->getIdentifierTypes())
-           ->getQuery()
-           ->getOneOrNullResult()
+        ->getQuery()
+        ->getResult()
        ;
    }
 
+
+
 //    /**
-//     * @return CustomersContact[] Returns an array of CustomersContact objects
+//     * @return CustomersReferences[] Returns an array of CustomersReferences objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -69,7 +74,7 @@ class CustomersContactRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?CustomersContact
+//    public function findOneBySomeField($value): ?CustomersReferences
 //    {
 //        return $this->createQueryBuilder('c')
 //            ->andWhere('c.exampleField = :val')
