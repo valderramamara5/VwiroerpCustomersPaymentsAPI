@@ -77,7 +77,7 @@ class UpdateController extends AbstractController
         // $customerType = $this->customerTRepository->findOneById($custType);
         // $identifierCustomerType = $this->IdentifierRepository->find($idenType);
         $customer = new Customers();
-        $customer = $this->customersRepository->findByPrimaryKeys($customerId,$custType,$idenType);
+        //$customer = $this->customersRepository->findByPrimaryKeys($customerId,$custType,$idenType);
         dd($customer);
         // $customer = $this->customersRepository->findByPrimaryKeys($customerId,$customerType,$identifierCustomerType);
        
@@ -233,7 +233,7 @@ class UpdateController extends AbstractController
                     $entityManager->persist($customerAddress);
                 }
 
-                $socioconomicStatus = isset($dataJson['address']['socioconomicStatus']) ? $dataJson['address']['socioconomicStatus']:Null;
+                $socioeconomicStatus = isset($dataJson['address']['socioconomicStatus']) ? $dataJson['address']['socioconomicStatus']:Null;
                 if (!is_null($socioconomicStatus)){
                     $customerAddress->setSocieconomicStatus($socioconomicStatus);
                     $entityManager->persist($customerAddress);

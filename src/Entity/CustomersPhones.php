@@ -6,11 +6,22 @@ use Doctrine\DBAL\Types\Types;
 
 #[ORM\Entity(repositoryClass: CustomersPhonesRepository::class)]
 class CustomersPhones
-{
+{ 
     #[ORM\Id]
+    #[ORM\GeneratedValue(strategy:"SEQUENCE")]
+    #[ORM\SecuenceGenerator(sequenceName:"customers_phones_id_seq", allocationSize:1, initialValue:1)]
+    #[ORM\Column(name:"id", type:"integer", nullable:false)]
+    private ?int $id = null;
+
     #[ORM\GeneratedValue(strategy:"NONE")]
-    #[ORM\Column(name:"phone_number", type: Types::DECIMAL, precision: 14, scale: '0', nullable: true)]
-    private ?string $phoneNumber;
+    #[ORM\ManyToOne(targetEntity:"PhonesNumbers")]
+    #[ORM\JoinColumn(name:"phones_numbers_phone_number", referencedColumnName:"phone_number")]
+    private ?PhonesNumbers $phonesNumber;
+
+    #[ORM\GeneratedValue(strategy:"NONE")]
+    #[ORM\ManyToOne(targetEntity:"CountriesPhoneCode")]
+    #[ORM\JoinColumn(name:"countries_phone_code_id", referencedColumnName:"id")]
+    private ?CountriesPhoneCode $countriesPhoneCode;
 
     #[ORM\GeneratedValue(strategy:"NONE")]
     #[ORM\ManyToOne(targetEntity:"Customers")]
@@ -19,23 +30,9 @@ class CustomersPhones
     #[ORM\JoinColumn(name:"customers_identifier_types_id", referencedColumnName:"identifier_types_id")]
     private ?Customers $customers;
 
-    #[ORM\GeneratedValue(strategy:"NONE")]
-    #[ORM\ManyToOne(targetEntity:"CountriesPhoneCode")]
-    #[ORM\JoinColumn(name:"countries_phone_code_id", referencedColumnName:"id")]
-    private ?CountriesPhoneCode $countriesPhoneCode;
-
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $createdDate = null;
 
-    public function getPhoneNumber(): ?string
-    {
-        return $this->phoneNumber;
-    }
-
-    public function setPhoneNumber(string $phoneNumber): string
-    {
-        return $this-> phoneNumber = $phoneNumber ;
-    }
 
     public function getCreatedDate(): ?\DateTimeInterface
     {
@@ -73,4 +70,44 @@ class CustomersPhones
         return $this;
     }
 
+
+    /**
+     * Get the value of phonesNumber
+     */ 
+    public function getPhonesNumber()
+    {
+        return $this->phonesNumber;
+    }
+
+    /**
+     * Set the value of phonesNumber
+     *
+     * @return  self
+     */ 
+    public function setPhonesNumber($phonesNumber)
+    {
+        $this->phonesNumber = $phonesNumber;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of id
+     */ 
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set the value of id
+     *
+     * @return  self
+     */ 
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
+    }
 }

@@ -3,8 +3,11 @@
 namespace App\Repository;
 
 use App\Entity\CustomersReferences;
+use App\Entity\IdentifierTypes;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use App\Repository\IdentifierTypesRepository;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * @extends ServiceEntityRepository<CustomersReferences>
@@ -16,7 +19,7 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class CustomersReferencesRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry,  private IdentifierTypesRepository $identifierRepository)
     {
         parent::__construct($registry, CustomersReferences::class);
     }
@@ -39,11 +42,31 @@ class CustomersReferencesRepository extends ServiceEntityRepository
         }
     }
 
-               /**
+    public function create($reference, $customer, $countryPhoneCode) : ?CustomersReferences
+    {
+        $fullNameReference = $reference['fullName'] ?? throw new BadRequestHttpException('400', null, 400);
+        $phoneReference = $reference['contacPhone'] ?? throw new BadRequestHttpException('400', null, 400);
+        $idTypeReference = $reference['type'] ?? throw new BadRequestHttpException('400', null, 400);
+        $identifierTypeReference = $this->identifierRepository->find($idTypeReference);
+        $customerReference = new CustomersReferences();
+        $date = new \DateTime();
+        $customerReference->setCustomers($customer);
+        $customerReference->setReferencesIdentifierTypes($identifierTypeReference);
+        $customerReference->setFullName($fullNameReference);
+        $customerReference->setReferencesContactPhone($phoneReference);
+        $customerReference->setReferencesCountriesPhoneCode($countryPhoneCode);
+        $customerReference->setCreatedDate($date);
+        
+        return $customerReference;    
+        
+    }
+
+
+    /**
     * @return CustomersAddresses[] Returns an array of CustomersPhones objects
     */
-   public function findByCustomer($customer): array
-   {
+    public function findByCustomer($customer): array
+    {
         return $this->createQueryBuilder('cr')
         ->join('cr.customers', 'c')
         ->andWhere('c.id = :id')
@@ -55,7 +78,7 @@ class CustomersReferencesRepository extends ServiceEntityRepository
         ->getQuery()
         ->getResult()
        ;
-   }
+    }
 
 
 

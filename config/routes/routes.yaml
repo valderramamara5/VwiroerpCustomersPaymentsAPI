@@ -1,6 +1,6 @@
 api_post_show:
     path:       api/v1/customers
-    controller: App\Controller\CustomersController::create
+    controller: App\Controller\CustomersController::createUpdate
     methods:    POST    
 
 update_customers:

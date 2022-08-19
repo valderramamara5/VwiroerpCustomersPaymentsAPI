@@ -2,9 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\Customers;
-use App\Entity\CustomersPersonalIdentifications;
-use App\Entity\PersonalIdentificationTypes;
+
 use App\Entity\CustomersPhones;
 use App\Entity\CustomersAddresses;
 use App\Entity\Cities;
@@ -17,9 +15,14 @@ use App\Entity\Countries;
 use App\Entity\States;
 use App\Entity\CustomersReferences;
 use App\Repository\CustomersRepository;
-//use App\Repository\CustomersContactRepository;
+use App\Repository\ContactsRepository;
+use App\Repository\CustomersContactRepository;
 use App\Repository\CustomerTypesRepository;
 use App\Repository\IdentifierTypesRepository;
+use App\Repository\CustomersAddressesRepository;
+use App\Repository\PhonesNumbersRepository;
+use App\Repository\CustomersPhonesRepository;
+use App\Repository\CustomersReferencesRepository;
 use App\Repository\CountriesRepository;
 use App\Repository\CountriesPhoneCodeRepository;
 use App\Repository\CitiesRepository;
@@ -33,221 +36,110 @@ use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Connection;
 use Psr\Log\LoggerInterface;
 
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+
+
+
 class CustomersController extends AbstractController
 {
     public function __construct(
         private CustomersRepository $customersRepository,
-        //private PromotionRepository $repositoryPromotion
+        private ContactsRepository $contactRepository,
+        private CustomersContactRepository $customerContactRepository,
+        private CustomersAddressesRepository $customerAddressRepository,
         private CustomerTypesRepository $customerTRepository,
         private IdentifierTypesRepository $IdentifierRepository,
-        //private CustomersContactRepository $customerContactRepository,
         private CountriesRepository $countryRepository,
         private CountriesPhoneCodeRepository $countryPhoneRepository,
         private CitiesRepository $cityRepository,
         private StatesRepository $StateRepository,
+        private PhonesNumbersRepository $phoneRepository,
+        private CustomersPhonesRepository $customerPhoneRepository,
+        private CustomersReferencesRepository $customerReferencesRepository,
         private EntityManagerInterface $entityManager
         )
         {}
     
-
-   
-    public function create(Request $request, ManagerRegistry $doctrine, LoggerInterface $logger) : Response
+    public function createUpdate(Request $request, ManagerRegistry $doctrine, LoggerInterface $logger) : Response
     {
+        
         $this->logger = $logger;
-
         $this->logger->info("ENTRO");
-
-  
         $entityManager = $doctrine->getManager();
-
         $dataJson = json_decode($request->getContent(), true);
+ 
+        $customerId=  $dataJson['identification']["value"] ?? throw new BadRequestHttpException('400', null, 400);
+        $customerType=  $dataJson['customerType'] ?? throw new BadRequestHttpException('400', null, 400);
+        $customerIdentifierType =  $dataJson['identification']['idIdentifierType'] ?? throw new BadRequestHttpException('400', null, 400);
         
-        $conn = $entityManager -> getConnection(); 
+        $customer = $this->customersRepository->findById($customerId,$customerType,$customerIdentifierType);
         
-        
-        $idenType = $dataJson['identification']['idIdentifierType'];
-        $custType = $dataJson['customerType'];
-        $customerId = $dataJson['identification']['value'];
-        $emailCustomer = $dataJson['email'];
+        if(is_null($customer)){
+            
+            $customer = $this->customersRepository->create($customerId, $customerType, $customerIdentifierType, $dataJson);
+            $entityManager->persist($customer);
+            
+            if($customerType == 2){
+                $mainContact = $dataJson['mainContact'] ?? throw new BadRequestHttpException('400', null, 400);
+                $contactId = $mainContact['identification']['value'] ?? throw new BadRequestHttpException('400', null, 400);
+                $identTypeContact = $mainContact['identification']['idIdentifierType'] ?? throw new BadRequestHttpException('400', null, 400);
+                $contact = $this->contactRepository->findById($contactId,$identTypeContact);
+                if(is_null($contact)){
+                    $contact = $this->contactRepository->create($dataJson);
+                    $entityManager->persist($contact);
+                }
+                $customerContact = $this->customerContactRepository->create($customer, $contact);
+                $entityManager->persist($customerContact);
+                
+            } 
+
+            $customerAddress = $this->customerAddressRepository->create($dataJson, $customer);
+            $entityManager->persist($customerAddress);
     
-        // $firstNameCustomer = 'maria';
-        // $middleNameCustomer = 'lucia'; Agregar al Json
-        // $lastNameCustomer  = 'perez';
-        // $emailCustomer = '@1';
-        
-        
-
-       
-        $nameCountry = 'Colombia'; //Agregar al Json
-        
-        $countryId = $this->countryRepository-> findIdByName($nameCountry);
-        $country =  $this->countryRepository-> findByName($nameCountry);
-        $countryPhoneCode = $this -> countryPhoneRepository->findOneByCountry($countryId);
-
-        $phoneNumbers =$dataJson['phoneNumbers'];
-
-        
-        $nameState = 'Valle del Cauca'; //Agregar al Json
-        
-        $nameCity = $dataJson['address']['city']['name'];
-        $line1 = $dataJson['address']['line1'];
-        $line2 = $dataJson['address']['line2'];;
-        $zipcode = $dataJson['address']['zipCode'];
-
-        $socioconomicStatus = 5; //Agregar al Json
-        
-        $note = $dataJson['address']['note'];
-        //$states = $this->StateRepository->findByName($nameState);
-        $city =  $this->cityRepository->findByName($nameCity);
-     
-        
-        $references = $dataJson['references'];
-
-        $customerType = new CustomerTypes;
-        $identifierType = new IdentifierTypes();
-        $customer = new Customers();
-
-
-        $identifierType = $this -> IdentifierRepository ->find($idenType);
-        $customerType = $this ->customerTRepository ->find($custType);
-        $customer->setPrimaryKeys($customerId, $customerType, $identifierType); 
-        $customer->setEmail(isset($emailCustomer) ? $emailCustomer : Null);
-        
- 
-        $date = new \DateTime();
-        $customer->setCreatedDate($date);
-        $customer->setUpdateDate($date);
-       
-       
-        if($custType == 2){
-            $comercialName = $dataJson['comercialName'];
-            $contactId = '65456545785'; //Agregar al Json(?)
-            $identTypeContact = 1; //Agregar al Json(?)
-            $firstNameContact = $dataJson['mainContact']['firstName'];
-            $middleNameContact = $dataJson['mainContact']['middleName'];
-            $lastNameContact  =  $dataJson['mainContact']['lastName'];
-            $secondLastNameContact = $dataJson['mainContact']['secondLastName'];
-            $emailContact =  $dataJson['mainContact']['email'];
-            
-            $customer->setComercialName($comercialName);
-            $entityManager->persist($customer);
-            //$identifierTypeContact = new IdentifierTypes();
-            $contact = new Contacts();
-            
-            $identifierTypeContact = $this -> IdentifierRepository ->find($identTypeContact);
-            
-            $contact->setPrimaryKeys($contactId,$identifierTypeContact);
-            $contact->setFirstName($firstNameContact);
-            $contact->setMiddleName(isset($middleNameContact) ? $middleNameContact : Null);
-            $contact->setLastName($lastNameContact);
-            $contact->setSecondLastName(isset($secondLastNameContact) ? $secondLastNameContact : Null);
-            $contact->setEmail($emailContact);
-            $contact->setUpdateDate($date);
-            $contact->setCreatedDate($date);   
-            $entityManager->persist($contact);
-            
-            
-            $customersContacts = new CustomersContact();
-            $customersContacts->setCustomers($customer);
-            $customersContacts -> setContacts($contact);
-            $entityManager->persist($customersContacts);
-
-            
-        }
-        else{
-            $firstNameCustomer = $dataJson['firstName'];
-            
-            $middleNameCustomer = isset($dataJson['middleName']) ? $dataJson['middleName']:Null; //Agregar al Json
-            
-            $lastNameCustomer = $dataJson['lastName'];
-
-            $customer-> setFirstName($firstNameCustomer);
-            $customer-> setMiddleName($middleNameCustomer);
-            $customer-> setLastName($lastNameCustomer);
-            $customer-> setSecondLastName(isset($secondLastNameCustomer) ? $secondLastNameCustomer : Null);
-            $entityManager->persist($customer);
-       
-        }     
-
-        foreach($phoneNumbers as $number){
-            $customerPhone = new CustomersPhones();
-            $customerPhone->setPhoneNumber($number);
-            $customerPhone->setCustomers($customer);
-            $customerPhone->setCountriesPhoneCode($countryPhoneCode);
-            $customerPhone->setCreatedDate($date);
-           
+            $phoneNumbers = $dataJson['phoneNumbers'] ?? throw new BadRequestHttpException('400', null, 400);
+            $nameCountry = $dataJson['address']['country'] ?? throw new BadRequestHttpException('400', null, 400);
+            $countryId = $this->countryRepository-> findIdByName($nameCountry);
+            $countryPhoneCode = $this -> countryPhoneRepository->findOneByCountry($countryId);
+            foreach ($phoneNumbers as $phoneNumber){
+                $number = $this->phoneRepository->find($phoneNumber);
+                if(is_null($number)){
+                    $number = $this->phoneRepository->create($phoneNumber, $countryPhoneCode);
+                    $entityManager->persist($number);
+            }
+            $customerPhone = $this->customerPhoneRepository->create($number, $countryPhoneCode, $customer);
             $entityManager->persist($customerPhone);
+            }
+            
 
-        }
+            $references = $dataJson['references'] ?? throw new BadRequestHttpException('400', null, 400);
+            
+            foreach($references as $reference){
+                $customerReference = $this->customerReferencesRepository->create($reference, $customer, $countryPhoneCode);
+                $entityManager->persist($customerReference);
+            }
 
-        $customerAddress = new CustomersAddresses();
-        $customerAddress->setCustomers($customer);
-        $customerAddress->setCities($city);
-        $customerAddress->setLine1($line1);
-        $customerAddress->setLine2($line2);
-        $customerAddress->setZipcode($zipcode);
-        $customerAddress->setSocieconomicStatus($socioconomicStatus);
-        $customerAddress->setNote($note);
-        $customerAddress->setCreatedDate($date);
-       
-        $entityManager->persist($customerAddress);
-        
-      
+            $entityManager->flush();  
+            return $this->json([
+                'path' => 'src/Controller/CustomersController.php',
+            ]);
+            
 
+            
         
-        foreach($references as $reference){
-            $customerReference = new CustomersReferences();
-            $referenceIdentifierType = new IdentifierTypes();
-            $referenceIdentifierType = $this -> IdentifierRepository ->find($reference['type']);
-            $customerReference->setCustomers($customer);
-            $customerReference->setReferencesCountriesPhoneCode($countryPhoneCode);
-            $customerReference->setFullName($reference['fullName']);
-            $customerReference->setReferencesContactPhone($reference['contacPhone']);
-            $customerReference->setCreatedDate($date);
-            $entityManager->persist($customerReference);
-          
-          
-        }
-        
-        
-        $entityManager->flush();  
-        return $this->json([
-            //'id' => $customerType->getId(),
-            'customer' => $customer,
-            // 'contact' => $customersContacts,
-            //'address' => $customerAddress,
-            // 'phone' => $customerPhone,
-            // 'customerReference' => $customerReference,
-            //'customerPhone' => $customerPhone,
-             //'type' => $customersContacts->getCustomers(),
-             'path' => 'src/Controller/CustomersController.php',
-         ]); 
-        
-
- 
-
     }
 
 
-    public function update(Request $request, ManagerRegistry $doctrine, LoggerInterface $logger) : Response
-    {
-        $this->logger = $logger;
+        else
+        {
+            //Agregar updates para el customer ingresado
+            return $this->json([
+                'path' => 'src/Controller/CustomersController.php',
+            ]); 
 
-        $this->logger->info("ENTRO");
-
-  
-        $entityManager = $doctrine->getManager();
-
-        $dataJson = json_decode($request->getContent(), true);
-        
-        $conn = $entityManager -> getConnection(); 
-
-        return $this->json([
-            'infoUpdate' => $customer,
-             'path' => 'src/Controller/CustomersController.php',
-         ]); 
-        
-    }    
+        }
         
 
+       
+        
+    }
 }

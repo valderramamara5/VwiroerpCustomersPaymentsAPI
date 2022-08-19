@@ -39,6 +39,14 @@ class CustomersContactRepository extends ServiceEntityRepository
         }
     }
 
+    public function create($customer, $contact): ?CustomersContact
+    {
+        $customerContact = new CustomersContact();
+        $customerContact->setCustomers($customer);
+        $customerContact -> setContacts($contact);
+        return $customerContact;
+    }
+
        public function findOneByCustomer($customer): ?CustomersContact
    {
        return $this->createQueryBuilder('cc')

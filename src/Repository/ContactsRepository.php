@@ -3,8 +3,11 @@
 namespace App\Repository;
 
 use App\Entity\Contacts;
+use App\Entity\IdentifierTypes;
+use App\Repository\IdentifierTypesRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * @extends ServiceEntityRepository<Contacts>
@@ -16,10 +19,10 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class ContactsRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, private IdentifierTypesRepository $identifierRepository)
     {
         parent::__construct($registry, Contacts::class);
-    }
+    } 
 
     public function add(Contacts $entity, bool $flush = false): void
     {
@@ -39,11 +42,41 @@ class ContactsRepository extends ServiceEntityRepository
         }
     }
 
-       public function findOneByContactId($id): ?Contacts
+    public function create($dataJson ): ?Contacts
+    {
+        
+        $mainContact = $dataJson['mainContact'] ?? throw new BadRequestHttpException('400', null, 400);
+        $contactId = $mainContact['identification']['value'] ?? throw new BadRequestHttpException('400', null, 400);
+        $identTypeContact = $mainContact['identification']['idIdentifierType'] ?? throw new BadRequestHttpException('400', null, 400);
+        $firstNameContact = $mainContact['firstName'] ?? throw new BadRequestHttpException('400', null, 400);;
+        $middleNameContact = isset($mainContact['middleName']) ? $mainContact['middleName']: Null;
+        $lastNameContact = $mainContact['lastName'] ?? throw new BadRequestHttpException('400', null, 400);
+        $secondLastNameContact = isset($mainContact['secondLastName']) ? $mainContact['secondLastName']:Null; 
+        $emailContact =  $mainContact['email'] ?? throw new BadRequestHttpException('400', null, 400);
+    
+        $identifierTypeContact = new IdentifierTypes();
+        $identifierTypeContact = $this->identifierRepository->find($identTypeContact);
+        $contact = new Contacts();
+        $contact->setPrimaryKeys($contactId,$identifierTypeContact);
+        $contact->setFirstName($firstNameContact);
+        $contact->setMiddleName($middleNameContact);
+        $contact->setLastName($lastNameContact);
+        $contact->setSecondLastName($secondLastNameContact);
+        $contact->setEmail($emailContact);
+        $date = new \DateTime();
+        $contact->setUpdateDate($date);
+        $contact->setCreatedDate($date); 
+        return $contact; 
+        
+    }
+
+       public function findById($id, $identifierContact): ?Contacts
    {
        return $this->createQueryBuilder('c')
            ->andWhere('c.id = :id')
+           ->andWhere('c.identifierTypes = :identifierTypes')
            ->setParameter('id', $id)
+           ->setParameter('identifierTypes', $identifierContact)
            ->getQuery()
            ->getOneOrNullResult()
        ;

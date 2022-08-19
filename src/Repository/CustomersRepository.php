@@ -3,8 +3,13 @@
 namespace App\Repository;
 
 use App\Entity\Customers;
+use App\Entity\CustomerTypes;
+use App\Entity\IdentifierTypes;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Doctrine\Persistence\ManagerRegistry;
+use App\Repository\CustomerTypesRepository;
+use App\Repository\IdentifierTypesRepository;
 
 /**
  * @extends ServiceEntityRepository<Customers>
@@ -16,7 +21,7 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class CustomersRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, private CustomerTypesRepository $customerTRepository, private IdentifierTypesRepository $identifierRepository)
     {
         parent::__construct($registry, Customers::class);
     }
@@ -41,17 +46,44 @@ class CustomersRepository extends ServiceEntityRepository
         }
     }
 
-       public function findById($id)
-   {
-       return $this->createQueryBuilder('c')
-           ->andWhere('c.id = :id')
-           ->setParameter('id', $id )
-           ->getQuery()
-           ->getResult()
-       ;
-   }
+    public function create($customerId, $customerTypeId, $customerIdentifierType, $dataJson ): ?Customers
+    {
 
-   public function findByPrimaryKeys($id,  $customerType,  $identifierCustomerType): ?Customers
+        $email = $dataJson['email'] ?? throw new BadRequestHttpException('400', null, 400);
+
+        $customer = new Customers();
+        $customerType = new CustomerTypes;
+        $identifierType = new IdentifierTypes();
+
+        $identifierType = $this->identifierRepository->find($customerIdentifierType);
+        $customerType = $this->customerTRepository->find($customerTypeId);
+        $customer->setPrimaryKeys($customerId, $customerType, $identifierType);
+        
+        $date = new \DateTime();
+        $customer->setCreatedDate($date);
+        $customer->setUpdateDate($date);
+
+        $customer->setEmail($email);
+
+        if ($customerTypeId == 2){
+            $comercialName = $dataJson['comercialName'] ?? throw new BadRequestHttpException('400', null, 400);
+            $customer->setComercialName($comercialName);
+        }
+        else{
+            $firstName = $dataJson['firstName'] ?? throw new BadRequestHttpException('400', null, 400);
+            $middleName = $dataJson['middleName'] ;
+            $lastName = $dataJson['lastName'] ?? throw new BadRequestHttpException('400', null, 400);;
+            $secondLastName = $dataJson['secondLastName'] ;
+            $customer->setFirstName($firstName);
+            $customer->setMiddleName($middleName);
+            $customer->setLastName($lastName);
+            $customer->setSecondLastName($secondLastName);
+        }
+        
+        return $customer;
+    }
+
+   public function findById($id,  $customerType,  $identifierCustomerType): ?Customers
    {
        return $this->createQueryBuilder('c')
            ->join('c.customerTypes', 'ct')

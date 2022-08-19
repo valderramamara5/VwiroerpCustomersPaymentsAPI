@@ -39,6 +39,18 @@ class CustomersPhonesRepository extends ServiceEntityRepository
         }
     }
 
+    public function create($number, $countryPhoneCode, $customer) :?CustomersPhones
+    {
+        $customerPhone = new CustomersPhones();
+        $date = new \DateTime();
+        $customerPhone->setPhonesNumber($number);
+        $customerPhone->setCountriesPhoneCode($countryPhoneCode);
+        $customerPhone->setCustomers($customer);
+        $customerPhone->setCreatedDate($date);
+        return $customerPhone;
+        
+    }
+
        /**
     * @return CustomersPhones[] Returns an array of CustomersPhones objects
     */
