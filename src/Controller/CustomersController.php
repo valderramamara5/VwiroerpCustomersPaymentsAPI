@@ -1,19 +1,6 @@
 <?php
-
 namespace App\Controller;
 
-
-use App\Entity\CustomersPhones;
-use App\Entity\CustomersAddresses;
-use App\Entity\Cities;
-use App\Entity\Contacts;
-use App\Entity\CountriesPhoneCode;
-use App\Entity\CustomerTypes;
-use App\Entity\IdentifierTypes;
-use App\Entity\CustomersContact; 
-use App\Entity\Countries;
-use App\Entity\States;
-use App\Entity\CustomersReferences;
 use App\Repository\CustomersRepository;
 use App\Repository\ContactsRepository;
 use App\Repository\CustomersContactRepository;
@@ -38,8 +25,6 @@ use Psr\Log\LoggerInterface;
 
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-
-
 class CustomersController extends AbstractController
 {
     public function __construct(
@@ -62,12 +47,11 @@ class CustomersController extends AbstractController
     
     public function createUpdate(Request $request, ManagerRegistry $doctrine, LoggerInterface $logger) : Response
     {
-        
         $this->logger = $logger;
         $this->logger->info("ENTRO");
         $entityManager = $doctrine->getManager();
         $dataJson = json_decode($request->getContent(), true);
- 
+
         $customerId=  $dataJson['identification']["value"] ?? throw new BadRequestHttpException('400', null, 400);
         $customerType=  $dataJson['customerType'] ?? throw new BadRequestHttpException('400', null, 400);
         $customerIdentifierType =  $dataJson['identification']['idIdentifierType'] ?? throw new BadRequestHttpException('400', null, 400);
@@ -89,8 +73,7 @@ class CustomersController extends AbstractController
                     $entityManager->persist($contact);
                 }
                 $customerContact = $this->customerContactRepository->create($customer, $contact);
-                $entityManager->persist($customerContact);
-                
+                $entityManager->persist($customerContact);  
             } 
 
             $customerAddress = $this->customerAddressRepository->create($dataJson, $customer);
@@ -110,9 +93,7 @@ class CustomersController extends AbstractController
             $entityManager->persist($customerPhone);
             }
             
-
             $references = $dataJson['references'] ?? throw new BadRequestHttpException('400', null, 400);
-            
             foreach($references as $reference){
                 $customerReference = $this->customerReferencesRepository->create($reference, $customer, $countryPhoneCode);
                 $entityManager->persist($customerReference);
@@ -122,24 +103,72 @@ class CustomersController extends AbstractController
             return $this->json([
                 'path' => 'src/Controller/CustomersController.php',
             ]);
-            
-
-            
-        
     }
+        else{
+            $customer = $this->customersRepository->update($customer, $dataJson);
+            $entityManager->persist($customer);
+            if($customerType == 2){
+                $mainContact = isset($dataJson['mainContact']) ? $dataJson['mainContact']:Null;
+                if (!is_null($mainContact)){
+                    $customerContact = $this->customerContactRepository->findOneByCustomer($customer);
+                    $contact = $customerContact->getContacts();
+                    $contact = $this->contactRepository->update($dataJson, $contact);
+                    $customerContact = $this->customerContactRepository->update($contact, $customerContact);
+                    $entityManager->persist($customerContact);
+                    $entityManager->persist($contact);
+                }
+            }
 
+            $address =isset($dataJson['address']) ? $dataJson['address']:Null;
+            if(!is_null($address)){
+                $customerAddress = $this->customerAddressRepository->findOneByCustomer($customer);
+                $customerAddress = $this->customerAddressRepository->update($dataJson, $customerAddress);
+                $entityManager->persist($customerAddress);  
+            }
 
-        else
-        {
-            //Agregar updates para el customer ingresado
+            $phoneNumbers = $dataJson['phoneNumbers'] ? $dataJson['phoneNumbers']:Null;
+            if(!is_null($phoneNumbers)){
+                foreach ($phoneNumbers as $phoneNumber){
+                    $customerCity = $this->customerAddressRepository->findOneByCustomer($customer);
+                    $nameCountry = $customerCity->getCities()->getStates()->getCountries()->getName();
+                    $countryId = $this->countryRepository-> findIdByName($nameCountry);
+                    $countryPhoneCode = $this -> countryPhoneRepository->findOneByCountry($countryId);
+
+                    $number = $this->phoneRepository->find($phoneNumber);
+                    if(is_null($number)){
+                        $number = $this->phoneRepository->create($phoneNumber, $countryPhoneCode);
+                        $entityManager->persist($number);
+                    }
+                    $customerPhones =  $this->customerPhoneRepository->findByCustomer($customer);
+                    foreach($customerPhones as $customerPhone){
+                        if($customerPhone->getPhonesNumber()!=$number){
+                            $newCustomerPhone = $this->customerPhoneRepository->create($number, $countryPhoneCode, $customer);
+                            $entityManager->persist($newCustomerPhone);
+                        }
+                    }
+                }  
+            }
+
+            $references = $dataJson['references'] ? $dataJson['references']:Null;
+            if(!is_null($references)){
+                $customerReferences = $this->customerReferencesRepository->findByCustomer($customer);
+                
+                foreach($references as $reference){
+                    foreach($customerReferences as $customerReference){
+                        if(($customerReference->getFullName()== $reference['fullName']) and ($customerReference->getReferencesContactPhone()== $reference['contactPhone'])){
+                            continue;
+                        }
+                        else{
+                             $newCustomerReference = $this->customerReferencesRepository->create($reference, $customer, $countryPhoneCode);
+                            $entityManager->persist($newCustomerReference);
+                        }
+                    }
+                }
+            }
+            $entityManager->flush();  
             return $this->json([
                 'path' => 'src/Controller/CustomersController.php',
             ]); 
-
-        }
-        
-
-       
-        
+        }      
     }
 }

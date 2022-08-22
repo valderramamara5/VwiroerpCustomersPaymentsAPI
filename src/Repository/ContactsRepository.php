@@ -70,6 +70,66 @@ class ContactsRepository extends ServiceEntityRepository
         
     }
 
+    public function update($dataJson, $contact): ?Contacts
+    {
+        $mainContact = $dataJson['mainContact'];
+        //$contactId = isset($mainContact['identification']['value']) ? $mainContact['identification']['value']:Null;
+        // if (!is_null($contactId)){
+        //     $contact->setId($contactId);
+        //     $date = new \DateTime();
+        //     $contact->setUpdateDate($date);
+        //    // $customerContact->setContacts($contact);
+        // } 
+                    
+        // $identTypeContact = $mainContact['identification']['idIdentifierType'] ? $mainContact['identification']['idIdentifierType'] :Null;
+        // if (!is_null($identTypeContact)){
+        //     $identifierTypeContact = $this->identifierRepository->find($identTypeContact);
+        //     $contact->setIdentifierTypes($identifierTypeContact);
+        //     $date = new \DateTime();
+        //     $contact->setUpdateDate($date);
+        //     //$customerContact->setContact($contact);
+        // }
+
+        $firstNameContact = isset($dataJson['mainContact']['firstName']) ? $dataJson['mainContact']['firstName']:Null;
+        if (!is_null($firstNameContact)){
+            $contact->setFirstName($firstNameContact);
+            $date = new \DateTime();
+            $contact->setUpdateDate($date);
+            }
+                    
+        $middleNameContact = isset($dataJson['mainContact']['middleName']) ?$dataJson['mainContact']['middleName']:Null;
+        if (!is_null($middleNameContact)){
+            $contact->setMiddleName($middleNameContact);
+            $date = new \DateTime();
+            $contact->setUpdateDate($date);
+        }
+
+        $lastNameContact  =  isset($dataJson['mainContact']['lastName']) ?$dataJson['mainContact']['lastName']:Null ;
+        if (!is_null($lastNameContact)){
+            $date = new \DateTime();
+            $contact->setUpdateDate($date);
+            $contact->setLastName($lastNameContact);
+        }    
+
+        $secondLastNameContact = isset($dataJson['mainContact']['secondLastName']) ? $dataJson['mainContact']['secondLastName']:Null;
+        if (!is_null($secondLastNameContact)){
+            $date = new \DateTime();
+            $contact->setUpdateDate($date);
+            $contact->setSecondLastName($secondLastNameContact);
+        }
+                    
+        $emailContact =  isset($dataJson['mainContact']['email']) ? $dataJson['mainContact']['email']:Null;
+        if (!is_null($emailContact)){
+            $date = new \DateTime();
+            $contact->setUpdateDate($date);
+            $contact->setEmail($emailContact);
+        } 
+        
+        return($contact);
+                  
+    }
+
+
        public function findById($id, $identifierContact): ?Contacts
    {
        return $this->createQueryBuilder('c')

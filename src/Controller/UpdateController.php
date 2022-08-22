@@ -207,7 +207,6 @@ class UpdateController extends AbstractController
             if(!is_null($address)){
                 $customerAddress = $this->customerAddressRepository->findOneByCustomer($customer);
             
-                
                 $city = isset($dataJson['address']['city']['name']) ? $dataJson['address']['city']['name']:Null;
                 $cityCustomer = $this->cityRepository->findByName($city);
                 if (!is_null($cityCustomer)){

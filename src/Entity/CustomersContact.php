@@ -11,9 +11,6 @@ use Doctrine\DBAL\Types\Types;
 
 class CustomersContact
 {
-    
-    //Quien es id? = referencedColumnName:"id CustomerTypes"
-    //Falta idCustomerTypesCustomers
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy:"SEQUENCE")]
@@ -35,38 +32,6 @@ class CustomersContact
     #[ORM\JoinColumn(name:"contacts_identifier_types_id", referencedColumnName:"identifier_types_id")]
     private  $contacts;
 
-    // #[ORM\GeneratedValue(strategy:"NONE")]
-    // #[ORM\ManyToOne(targetEntity:"Contacts")]
-    // #[ORM\JoinColumn(name:"contacts_id", referencedColumnName:"id")]
-    // private ?Contacts $contacts;
-
-    // #[ORM\GeneratedValue(strategy:"NONE")]
-    // #[ORM\ManyToOne(targetEntity:"IdentifierTypes")]
-    // #[ORM\JoinColumn(name:"contacts_identifier_types_id", referencedColumnName:"id")]
-    // private ?Contacts $contactsIdentifierTypes;
-
-    // #[ORM\GeneratedValue(strategy:"NONE")]
-    // #[ORM\ManyToOne(targetEntity:"Customers")]
-    // #[ORM\JoinColumn(name:"customers_id", referencedColumnName:"id")]
-    // private ?Customers $customers;
-
-  
-   
-    // #[ORM\GeneratedValue(strategy:"NONE")]
-    // #[ORM\ManyToOne(targetEntity:"CustomerTypes")]
-    // #[ORM\JoinColumn(name:"customers_customer_types_id", referencedColumnName:"id")]
-    // private ?Customers $customersCustomerTypes;
-
-    // #[ORM\GeneratedValue(strategy:"NONE")]
-    // #[ORM\ManyToOne(targetEntity:"IdentifierTypes")]
-    // #[ORM\JoinColumn(name:"customers_identifier_types_id", referencedColumnName:"id")]
-    // private ?Customers $customersIdentifierTypes;
-
-    // public function setPrimaryKeys(Customers $customer, Contacts $contacts){
-    //     $this  ->setCustomers($customer);
-    //    $this -> setContacts($contacts);
-
-   //}
     public function getId(): ?int
     {
         return $this->id;

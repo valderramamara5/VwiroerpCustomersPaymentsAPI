@@ -83,6 +83,56 @@ class CustomersRepository extends ServiceEntityRepository
         return $customer;
     }
 
+
+    public function update($customer, $dataJson): ?Customers
+    {
+        $custType = $customer->getCustomerTypes();
+        $email = isset($dataJson['email']) ? $dataJson['email']:Null;
+        $comercialName = isset($dataJson['comercialName']) ?  $dataJson['comercialName']:Null;
+        $firstName = isset($dataJson['firstName']) ? $dataJson['firstName']:Null;
+        $middleName = isset($dataJson['middleName']) ? $dataJson['middleName']:Null;
+        $lastName = isset($dataJson['lastName']) ? $dataJson['lastName']:Null;
+        $secondLastName = isset($dataJson['secondLastName']) ? $dataJson['secondLastName']:Null;
+
+        if (!is_null($email)){   
+            $customer->setEmail($email);
+            $date = new \DateTime();
+            $customer->setUpdateDate($date);  
+        }
+
+        if($custType->getId() == 2 ){
+            if (!is_null($comercialName)){
+                $customer->setComercialName($comercialName);
+                $date = new \DateTime();
+                $customer->setUpdateDate($date);
+            }
+        }
+
+        else{
+            if (!is_null($firstNameCustomer)){
+                $customer->setFirstName($firstNameCustomer);
+                $date = new \DateTime();
+                $customer->setUpdateDate($date);
+            }
+            if (!is_null($middleNameCustomer)){
+                $customer->setMiddleName($middleNameCustomer);
+                $date = new \DateTime();
+                $customer->setUpdateDate($date);
+            } 
+            if (!is_null($lastNameCustomer)){
+                $customer->setLastName($lastNameCustomer);
+                $date = new \DateTime();
+                $customer->setUpdateDate($date);
+            }
+            if (!is_null($secondLastNameCustomer)){
+                $customer->setSecondLastName($secondLastNameCustomer);
+                $date = new \DateTime();
+                $customer->setUpdateDate($date);
+            }
+        }    
+        return $customer;
+    }
+
    public function findById($id,  $customerType,  $identifierCustomerType): ?Customers
    {
        return $this->createQueryBuilder('c')

@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Repository;
-
+use App\Entity\Cities;
 use App\Entity\CustomersAddresses;
 use App\Repository\CitiesRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -45,6 +45,7 @@ class CustomersAddressesRepository extends ServiceEntityRepository
     {
         $address = $dataJson['address'] ?? throw new BadRequestHttpException('400', null, 400);
         $nameCity = $address['city'];
+        $city = new Cities();
         $city = $this->cityRepository->findByName($nameCity);
         $line1 = $address['line1'];
         $line2 = isset($address['line2']) ? $address['line2']:Null;
@@ -64,7 +65,44 @@ class CustomersAddressesRepository extends ServiceEntityRepository
         return $customerAddress;
     }
 
-           /**
+    public function update($dataJson, $customerAddress): ?CustomersAddresses
+    {
+        $address = $dataJson['address'];
+        $nameCity = $address['city'] ? $address['city']: Null;
+        $cityCustomer = $this->cityRepository->findByName($nameCity);
+        if (!is_null($nameCity)){
+            $customerAddress->setCities($cityCustomer);
+        }
+
+        $line1 = isset($dataJson['address']['line1']) ? $dataJson['address']['line1']:Null;
+        if (!is_null($line1)){
+            $customerAddress->setLine1($line1);
+        }
+                
+        $line2 = isset($dataJson['address']['line2']) ? $dataJson['address']['line2']:Null;
+        if (!is_null($line2)){
+            $customerAddress->setLine2($line2);
+        }
+                
+        $zipcode = isset($dataJson['address']['zipcode']) ? $dataJson['address']['zipcode']:Null;
+        if (!is_null($zipcode)){
+            $customerAddress->setZipcode($zipcode);
+        }
+
+        $socioeconomicStatus = isset($dataJson['address']['socioeconomicStatus']) ? $dataJson['address']['socioeconomicStatus']:Null;
+        if (!is_null($socioeconomicStatus)){
+            $customerAddress->setSocieconomicStatus($socioeconomicStatus);
+        }
+            
+        $note = isset($dataJson['address']['note']) ? $dataJson['address']['note']:Null;
+        if (!is_null($note)){
+            $customerAddress->setNote($note);
+        }
+
+        return $customerAddress;
+    }
+
+    /**
     * @return CustomersAddresses[] Returns an array of CustomersPhones objects
     */
    public function findByCustomer($customer): array

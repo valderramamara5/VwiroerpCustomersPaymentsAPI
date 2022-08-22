@@ -45,7 +45,7 @@ class CustomersReferencesRepository extends ServiceEntityRepository
     public function create($reference, $customer, $countryPhoneCode) : ?CustomersReferences
     {
         $fullNameReference = $reference['fullName'] ?? throw new BadRequestHttpException('400', null, 400);
-        $phoneReference = $reference['contacPhone'] ?? throw new BadRequestHttpException('400', null, 400);
+        $phoneReference = $reference['contactPhone'] ?? throw new BadRequestHttpException('400', null, 400);
         $idTypeReference = $reference['type'] ?? throw new BadRequestHttpException('400', null, 400);
         $identifierTypeReference = $this->identifierRepository->find($idTypeReference);
         $customerReference = new CustomersReferences();

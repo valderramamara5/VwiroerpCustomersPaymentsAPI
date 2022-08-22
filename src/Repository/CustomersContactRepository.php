@@ -47,6 +47,12 @@ class CustomersContactRepository extends ServiceEntityRepository
         return $customerContact;
     }
 
+    public function update($contact, $customerContact): ?CustomersContact
+    {
+        $customerContact->setContacts($contact);
+        return $customerContact;
+    }
+
        public function findOneByCustomer($customer): ?CustomersContact
    {
        return $this->createQueryBuilder('cc')
