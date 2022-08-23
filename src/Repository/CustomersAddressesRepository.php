@@ -6,7 +6,7 @@ use App\Entity\CustomersAddresses;
 use App\Repository\CitiesRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 /**
  * @extends ServiceEntityRepository<CustomersAddresses>
  *
