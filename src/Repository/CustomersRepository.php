@@ -109,23 +109,23 @@ class CustomersRepository extends ServiceEntityRepository
         }
 
         else{
-            if (!is_null($firstNameCustomer)){
-                $customer->setFirstName($firstNameCustomer);
+            if (!is_null($firstName)){
+                $customer->setFirstName($firstName);
                 $date = new \DateTime();
                 $customer->setUpdateDate($date);
             }
-            if (!is_null($middleNameCustomer)){
-                $customer->setMiddleName($middleNameCustomer);
+            if (!is_null($middleName)){
+                $customer->setMiddleName($middleName);
                 $date = new \DateTime();
                 $customer->setUpdateDate($date);
             } 
-            if (!is_null($lastNameCustomer)){
-                $customer->setLastName($lastNameCustomer);
+            if (!is_null($lastName)){
+                $customer->setLastName($lastName);
                 $date = new \DateTime();
                 $customer->setUpdateDate($date);
             }
-            if (!is_null($secondLastNameCustomer)){
-                $customer->setSecondLastName($secondLastNameCustomer);
+            if (!is_null($secondLastName)){
+                $customer->setSecondLastName($secondLastName);
                 $date = new \DateTime();
                 $customer->setUpdateDate($date);
             }
