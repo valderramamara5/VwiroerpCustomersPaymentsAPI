@@ -44,13 +44,13 @@ class CustomersAddressesRepository extends ServiceEntityRepository
     public function create($dataJson, $customer): ?CustomersAddresses
     {
         $address = $dataJson['address'] ?? throw new BadRequestHttpException('400', null, 400);
-        $nameCity = $address['city'];
+        $nameCity = $address['city'] ?? throw new BadRequestHttpException('400', null, 400);
         $city = new Cities();
         $city = $this->cityRepository->findByName($nameCity);
-        $line1 = $address['line1'];
+        $line1 = $address['line1'] ?? throw new BadRequestHttpException('400', null, 400);
         $line2 = isset($address['line2']) ? $address['line2']:Null;
         $zipcode = isset($address['zipCode']) ? $address['zipCode']:Null;
-        $socioeconomicStatus =  $address['socioeconomicStatus'];
+        $socioeconomicStatus =  $address['socioeconomicStatus'] ?? throw new BadRequestHttpException('400', null, 400);
         $note = isset($address['note']) ? $address['note']:Null;
         $date = new \DateTime();
         $customerAddress = new CustomersAddresses();

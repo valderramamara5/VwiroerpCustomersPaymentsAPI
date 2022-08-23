@@ -32,6 +32,7 @@ class CustomersContact
     #[ORM\JoinColumn(name:"contacts_identifier_types_id", referencedColumnName:"identifier_types_id")]
     private  $contacts;
 
+
     public function getId(): ?int
     {
         return $this->id;

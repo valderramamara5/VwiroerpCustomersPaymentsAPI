@@ -68,12 +68,12 @@ class CustomersRepository extends ServiceEntityRepository
         if ($customerTypeId == 2){
             $comercialName = $dataJson['comercialName'] ?? throw new BadRequestHttpException('400', null, 400);
             $customer->setComercialName($comercialName);
-        }
+        } 
         else{
             $firstName = $dataJson['firstName'] ?? throw new BadRequestHttpException('400', null, 400);
-            $middleName = $dataJson['middleName'] ;
+            $middleName = isset($dataJson['middleName']) ? $dataJson['middleName']:Null ;
             $lastName = $dataJson['lastName'] ?? throw new BadRequestHttpException('400', null, 400);;
-            $secondLastName = $dataJson['secondLastName'] ;
+            $secondLastName = isset($dataJson['secondLastName']) ? $dataJson['secondLastName']:Null ;
             $customer->setFirstName($firstName);
             $customer->setMiddleName($middleName);
             $customer->setLastName($lastName);

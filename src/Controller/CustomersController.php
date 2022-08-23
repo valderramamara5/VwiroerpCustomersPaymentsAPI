@@ -18,9 +18,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\DBAL\Connection;
+//use Doctrine\DBAL\Connection;
 use Psr\Log\LoggerInterface;
 
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -33,11 +32,11 @@ class CustomersController extends AbstractController
         private CustomersContactRepository $customerContactRepository,
         private CustomersAddressesRepository $customerAddressRepository,
         private CustomerTypesRepository $customerTRepository,
-        private IdentifierTypesRepository $IdentifierRepository,
+        private IdentifierTypesRepository $identifierRepository,
         private CountriesRepository $countryRepository,
         private CountriesPhoneCodeRepository $countryPhoneRepository,
         private CitiesRepository $cityRepository,
-        private StatesRepository $StateRepository,
+        private StatesRepository $stateRepository,
         private PhonesNumbersRepository $phoneRepository,
         private CustomersPhonesRepository $customerPhoneRepository,
         private CustomersReferencesRepository $customerReferencesRepository,
@@ -132,7 +131,7 @@ class CustomersController extends AbstractController
                     $customerCity = $this->customerAddressRepository->findOneByCustomer($customer);
                     $nameCountry = $customerCity->getCities()->getStates()->getCountries()->getName();
                     $countryId = $this->countryRepository-> findIdByName($nameCountry);
-                    $countryPhoneCode = $this -> countryPhoneRepository->findOneByCountry($countryId);
+                    $countryPhoneCode = $this->countryPhoneRepository->findOneByCountry($countryId);
 
                     $number = $this->phoneRepository->find($phoneNumber);
                     if(is_null($number)){
@@ -159,7 +158,7 @@ class CustomersController extends AbstractController
                             continue;
                         }
                         else{
-                             $newCustomerReference = $this->customerReferencesRepository->create($reference, $customer, $countryPhoneCode);
+                            $newCustomerReference = $this->customerReferencesRepository->create($reference, $customer, $countryPhoneCode);
                             $entityManager->persist($newCustomerReference);
                         }
                     }
