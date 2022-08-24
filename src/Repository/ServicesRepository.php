@@ -86,8 +86,8 @@ class ServicesRepository extends ServiceEntityRepository
             }
         }
         if(is_null($name) and is_null($price)){
-            $allServices = $this->findAll();
-            return $allServices; 
+            $allServicesActive = $this->findByActive();
+            return $allServicesActive; 
         }
     }
 
@@ -157,6 +157,20 @@ class ServicesRepository extends ServiceEntityRepository
         ->getResult()
          ;
     }
+
+       /**
+    * @return Services[] Returns an array of Services objects
+    */
+   public function findByActive(): array
+   {
+       return $this->createQueryBuilder('s')
+       ->andWhere('s.active = true')
+       ->orderBy('s.id', 'ASC')
+       //->setMaxResults(10)
+       ->getQuery()
+       ->getResult()
+        ;
+   }
  
     
 //    /**
