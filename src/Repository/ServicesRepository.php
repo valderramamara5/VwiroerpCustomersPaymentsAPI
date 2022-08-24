@@ -84,8 +84,7 @@ class ServicesRepository extends ServiceEntityRepository
                 $serviceByMaxPrice = $this->findByMaxPrice($price);
                 return $serviceByMaxPrice;
             }
-        }
-        if(is_null($name) and is_null($price)){
+
             $allServicesActive = $this->findByActive();
             return $allServicesActive; 
         }
