@@ -9,3 +9,15 @@ update_customers:
     controller: App\Controller\UpdateController::update
     methods:    POST    
 
+api_create_services:
+    path:       api/v1/services
+    controller: App\Controller\ServicesController::create
+    methods:    POST  
+
+
+api_search_services:
+    path:       api/v1/services
+    controller: App\Controller\ServicesController::getServices
+    methods:    GET    
+
+
