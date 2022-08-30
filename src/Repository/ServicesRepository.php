@@ -66,27 +66,32 @@ class ServicesRepository extends ServiceEntityRepository
             $allServices = $this->findAll();
             return $allServices; 
         }
-        $name = isset($dataJson['name']) ? $dataJson['name']:Null;
-        $price = isset($dataJson['price']) ? $dataJson['price']:Null ;
 
-        if(!is_null($name) and !is_null($price)){
-            $name = strtolower('%'.$name.'%');
-            $serviceByNameAndMaxPrice = $this->findByNameAndMaxPrice($name, $price);
-            return $serviceByNameAndMaxPrice;
+        $name = isset($dataJson['name']) ? $dataJson['name']:Null;
+        $price = isset($dataJson['price']) ? $dataJson['price']:Null;
+
+        if(is_null($name) and is_null($price)){
+            $allServices = $this->findAll();
+            return $allServices;
         }
+        
         else{
+            if(!is_null($name) and !is_null($price)){
+                $name = strtolower('%'.$name.'%');
+                $serviceByNameAndMaxPrice = $this->findByNameAndMaxPrice($name, $price);
+                return $serviceByNameAndMaxPrice;
+            }
+
             if(!is_null($name)){
                 $name = strtolower('%'.$name.'%');
                 $serviceByName = $this->findByName($name);
                 return $serviceByName;
             }
+
             if(!is_null($price)){
                 $serviceByMaxPrice = $this->findByMaxPrice($price);
                 return $serviceByMaxPrice;
             }
-
-            $allServicesActive = $this->findByActive();
-            return $allServicesActive; 
         }
     }
 
@@ -97,7 +102,7 @@ class ServicesRepository extends ServiceEntityRepository
    {
        return $this->createQueryBuilder('s')
        ->andWhere('LOWER(s.name) LIKE :name')
-       ->andWhere('s.active = true')
+       //->andWhere('s.active = true')
        ->setParameter('name', $name)
        ->orderBy('s.id', 'ASC')
        //->setMaxResults(10)
@@ -114,7 +119,7 @@ class ServicesRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('s')
         
         ->andWhere('s.price <= :priceMax')
-        ->andWhere('s.active = true')
+        //->andWhere('s.active = true')
         ->setParameter('priceMax', $priceMax)
         ->orderBy('s.id', 'ASC')
         //->setMaxResults(10)
@@ -131,7 +136,7 @@ class ServicesRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('s')
         ->andWhere('LOWER(s.name) LIKE :name')
         ->andWhere('s.price <= :priceMax')
-        ->andWhere('s.active = true')
+        //->andWhere('s.active = true')
         ->setParameter('name', $name)
         ->setParameter('priceMax', $priceMax)
         ->orderBy('s.id', 'ASC')

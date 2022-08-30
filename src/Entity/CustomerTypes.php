@@ -8,7 +8,7 @@ use Doctrine\DBAL\Types\Types;
 class CustomerTypes
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue(strategy:"SEQUENCE")]
+    #[ORM\GeneratedValue(strategy:"IDENTITY")]
     #[ORM\SecuenceGenerator(sequenceName:"customer_types_id_seq", allocationSize:1, initialValue:1)]
     #[ORM\Column]
     private ?int $id = null;

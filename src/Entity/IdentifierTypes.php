@@ -8,7 +8,7 @@ use Doctrine\DBAL\Types\Types;
 class IdentifierTypes
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue(strategy:"SEQUENCE")]
+    #[ORM\GeneratedValue(strategy:"IDENTITY")]
     #[ORM\SecuenceGenerator(sequenceName:"identifier_types_id_seq", allocationSize:1, initialValue:1)]
     #[ORM\Column(name:"id", type:"integer", nullable:false)]
     private ?int $id;
