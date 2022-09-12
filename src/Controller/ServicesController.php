@@ -20,10 +20,16 @@ class ServicesController extends AbstractController
         $service = $this->serviceRepository->create($dataJson);
         $entityManager->persist($service);
         $entityManager->flush();
-        return $this->json([
-            'path' => 'src/Controller/ServicesController.php',
-        ]);
+        $id = $service->getId();
+        $response = new Response();
+        $response->setStatusCode(201);
+        $response->setContent(json_encode(['idService' => $id])) ;
+        return $response;
+        // return $this->json([
+        //     'path' => 'src/Controller/ServicesController.php',
+        // ]);
     }
+    
 
     public function getServices(Request $request, ManagerRegistry $doctrine) : Response
     {
