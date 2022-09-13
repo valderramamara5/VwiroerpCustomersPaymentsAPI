@@ -1,21 +1,10 @@
-api_post_show:
-    path:       api/v1/customers
-    controller: App\Controller\CustomersController::createUpdate
-    methods:    POST    
-
-update_customers:
-    path: api/v1/customers/update
-    # the controller value has the format 'controller_class::method_name' 
-    controller: App\Controller\UpdateController::update
-    methods:    POST    
-
 api_create_services:
     path:       api/v1/services
     controller: App\Controller\ServicesController::create
     methods:    POST  
 
 
-api_search_services:
+api_get_services:
     path:       api/v1/services
     controller: App\Controller\ServicesController::getServices
     methods:    GET    

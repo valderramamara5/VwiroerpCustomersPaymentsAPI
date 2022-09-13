@@ -23,11 +23,9 @@ class ServicesController extends AbstractController
         $id = $service->getId();
         $response = new Response();
         $response->setStatusCode(201);
-        $response->setContent(json_encode(['idService' => $id])) ;
+        $response->setContent(json_encode(['Created_Service' => $id])) ;
         return $response;
-        // return $this->json([
-        //     'path' => 'src/Controller/ServicesController.php',
-        // ]);
+
     }
     
 
