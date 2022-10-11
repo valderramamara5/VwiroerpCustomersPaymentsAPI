@@ -11,7 +11,7 @@ class Services
     #[ORM\GeneratedValue(strategy:"IDENTITY")]
     #[ORM\SecuenceGenerator(sequenceName:"services_id_seq", allocationSize:1, initialValue:1)]
     #[ORM\Column(name:"id", type:"integer", nullable:false)]
-    private ?int $id ;
+    private ?int $id;
 
     #[ORM\Column(length: 256, nullable: true)]
     private ?string $name;
@@ -20,7 +20,7 @@ class Services
     private ?string $description = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 20, scale: '2', nullable: true)]
-    private ?string $price ;
+    private ?string $price;
 
     #[ORM\Column(nullable: true)]
     private ?bool $active = null;
@@ -29,7 +29,7 @@ class Services
     private ?bool $taxable = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $createdDate ;
+    private ?\DateTimeInterface $createdDate;
 
     public function getId(): ?int
     {

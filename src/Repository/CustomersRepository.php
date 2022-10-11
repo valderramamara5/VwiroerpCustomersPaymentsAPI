@@ -189,6 +189,16 @@ class CustomersRepository extends ServiceEntityRepository
        ;
    }
 
+   public function getName($customer)
+   {
+    if($customer->getCustomerTypes()->getId()== 2){
+        return $customer->getComercialName();
+    }
+    else{
+        return $customer->getFullName();
+    }
+   }
+
 //    /**
 //     * @return Customers[] Returns an array of Customers objects
 //     */

@@ -3,6 +3,11 @@ api_create_services:
     controller: App\Controller\ServicesController::create
     methods:    POST  
 
+api_get_contracts_by_customer:
+    path:       api/v1/customers/contracts
+    controller: App\Controller\ContractsByCustomerController::getContractsByCustomer
+    methods:    GET  
+
 
 api_get_services:
     path:       api/v1/services
