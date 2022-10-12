@@ -1,3 +1,8 @@
+api_customers_payments:
+    path:       api/v1/customers/payment
+    controller: App\Controller\CustomersPaymentsController::recordCustomerPayment
+    methods:    POST 
+
 api_create_services:
     path:       api/v1/services
     controller: App\Controller\ServicesController::create
@@ -7,7 +12,6 @@ api_get_contracts_by_customer:
     path:       api/v1/customers/contracts
     controller: App\Controller\ContractsByCustomerController::getContractsByCustomer
     methods:    GET  
-
 
 api_get_services:
     path:       api/v1/services
