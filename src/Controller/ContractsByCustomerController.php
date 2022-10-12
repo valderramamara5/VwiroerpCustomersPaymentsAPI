@@ -36,7 +36,7 @@ class ContractsByCustomerController extends AbstractController
         foreach ($contracts as $contract) {
             $contractService = $this->contractServiceRepository->findByContract($contract);
             
-            $contentResponse = array('NameCustomer' => $customerName, 'IdContract' => $contract->getId(), 'ServiceName' => $contractService->getServices()->getName(), 'Price' => $contract->getValue());
+            $contentResponse = array('CustomerName' => $customerName, 'IdContract' => $contract->getId(), 'ServiceName' => $contractService->getServices()->getName(), 'Price' => $contract->getValue());
             array_push($jsonResponse, $contentResponse);
             
         }
