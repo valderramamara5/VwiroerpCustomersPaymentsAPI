@@ -40,18 +40,28 @@ class CustomersPaymentsRepository extends ServiceEntityRepository
         }
     }
 
-    public function recordPayment($dataJson, $customer, $contract): ?CustomersPayments
+    public function validateRequest($dataJson)
     {
-        $customerPayment = new CustomersPayments();
-        $customerPayment->setCustomers($customer);
-        $customerPayment->setContracts($contract);
+        $contractId = $dataJson['contractId'] ?? throw new BadRequestHttpException('400', null, 400);
+        $userSystem = $dataJson['userSystem']  ?? throw new BadRequestHttpException('400', null, 400);
         $paidValue = $dataJson['paid'] ?? throw new BadRequestHttpException('400', null, 400);
-        $note = isset($dataJson['note']) ?  $dataJson['note']:Null;
-        $customerPayment->setPaidValue($paidValue);
-        if($note){
-            $customerPayment->setNote($note);
-        }
+        $methodPayment = $dataJson['methodPayment'] ?? throw new BadRequestHttpException('400', null, 400);
+        return 'OK';
+    }
 
+    public function recordPayment($dataJson): ?CustomersPayments
+    {
+        $contractId = $dataJson['contractId'];
+        $userSystem = $dataJson['userSystem'];
+        $paidValue = $dataJson['paid'];
+        $methodPayment = $dataJson['methodPayment'];
+        $note = isset($dataJson['note']) ?  $dataJson['note']:Null;
+        $customerPayment = new CustomersPayments();
+        $customerPayment->setContractsId($contractId);
+        $customerPayment->setUserSystem($userSystem);
+        $customerPayment->setPaidValue($paidValue);
+        $customerPayment->setMethodPayment($methodPayment);
+        $customerPayment->setNote($note);
         $date = new \DateTime();
         $customerPayment->setPaymentDate($date);
 

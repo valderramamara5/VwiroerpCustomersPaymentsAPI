@@ -9,24 +9,21 @@ class CustomersPayments
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy:"IDENTITY")]
-    #[ORM\SecuenceGenerator(sequenceName:"contracts_id_seq", allocationSize:1, initialValue:1)]
+    #[ORM\SecuenceGenerator(sequenceName:"customers_payments_id_seq", allocationSize:1, initialValue:1)]
     #[ORM\Column(name:"id", type:"integer", nullable:false)]
     private ?int $id;
 
-    #[ORM\GeneratedValue(strategy:"NONE")]
-    #[ORM\ManyToOne(targetEntity:"Customers")]
-    #[ORM\JoinColumn(name:"customers_id", referencedColumnName:"id")]
-    #[ORM\JoinColumn(name:"customers_customer_types_id", referencedColumnName:"customer_types_id")]
-    #[ORM\JoinColumn(name:"customers_identifier_types_id", referencedColumnName:"identifier_types_id")]
-    private ?Customers $customers;
+    #[ORM\Column(type:"integer", nullable:false)]
+    private ?int $contractsId;
 
-    #[ORM\GeneratedValue(strategy:"NONE")]
-    #[ORM\ManyToOne(targetEntity:"Contracts")]
-    #[ORM\JoinColumn(name:"contracts_id", referencedColumnName:"id")]
-    private ?Contracts $contracts;
+    #[ORM\Column(type:"integer", nullable:false)]
+    private ?int $userSystem;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 20, scale: '2', nullable: true)]
     private ?string $paidValue;
+
+    #[ORM\Column(length: 128, nullable: true)]
+    private ?string $methodPayment = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $note = null;
@@ -75,26 +72,38 @@ class CustomersPayments
         return $this;
     }
 
-    public function getCustomers(): ?Customers
+    public function getContractsId(): ?int
     {
-        return $this->customers;
+        return $this->contractsId;
     }
 
-    public function setCustomers(?Customers $customers): self
+    public function setContractsId(int $contractsId): self
     {
-        $this->customers = $customers;
+        $this->contractsId = $contractsId;
 
         return $this;
     }
 
-    public function getContracts(): ?Contracts
+    public function getMethodPayment(): ?string
     {
-        return $this->contracts;
+        return $this->methodPayment;
     }
 
-    public function setContracts(?Contracts $contracts): self
+    public function setMethodPayment(?string $methodPayment): self
     {
-        $this->contracts = $contracts;
+        $this->methodPayment = $methodPayment;
+
+        return $this;
+    }
+
+    public function getUserSystem(): ?int
+    {
+        return $this->userSystem;
+    }
+
+    public function setUserSystem(int $userSystem): self
+    {
+        $this->userSystem = $userSystem;
 
         return $this;
     }
