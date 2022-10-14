@@ -4,8 +4,8 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
 
-#[ORM\Entity(repositoryClass: CustomersPaymentsRepository::class)]
-class CustomersPayments
+#[ORM\Entity(repositoryClass: PaymentsRepository::class)]
+class Payments
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy:"IDENTITY")]
