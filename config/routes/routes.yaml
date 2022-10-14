@@ -1,4 +1,4 @@
-api_customers_payments:
+api_payments:
     path:       api/v1/payments
     controller: App\Controller\PaymentsController::recordPayment
     methods:    POST 
