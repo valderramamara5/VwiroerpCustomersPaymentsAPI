@@ -13,6 +13,9 @@ class Contracts
     #[ORM\Column(name:"id", type:"integer", nullable:false)]
     private ?int $id;
 
+    #[ORM\Column(name:"id", type:"integer", nullable:false)]
+    private ?int $id;
+
     #[ORM\GeneratedValue(strategy:"NONE")]
     #[ORM\ManyToOne(targetEntity:"Customers")]
     #[ORM\JoinColumn(name:"customers_id", referencedColumnName:"id")]

@@ -42,10 +42,10 @@ class ContractsRepository extends ServiceEntityRepository
    /**
     * @return Contracts[] Returns an array of Contracts objects
     */
-   public function findByCustomer($customer): array
+   public function findByCustomer($customerId, $customerType, $customerIdentifierType): array
    {
-        return $this->createQueryBuilder('ct')
-            ->join('ct.customers', 'c')
+        return $this->createQueryBuilder('c')
+            //->join('ct.customers', 'c')
             ->andWhere('c.id = :id')
             ->andWhere('c.customerTypes = :customerTypes')
             ->andWhere('c.identifierTypes = :identifierTypes')
